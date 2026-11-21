@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>DevShelf — new books</title>
+  <id>https://hungpt99-dev.github.io/DevShelf/new</id>
+  <link href="https://hungpt99-dev.github.io/DevShelf/new"/>
+  <updated>2026-11-21T16:41:29.546Z</updated>
+  <source><title>EbookFoundation/free-programming-books</title></source>
+
+</feed>

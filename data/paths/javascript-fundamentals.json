@@ -1,0 +1,21 @@
+{
+  "id": "javascript-fundamentals",
+  "title": "JavaScript fundamentals",
+  "description": "Build a solid base in the language and the browser.",
+  "level": "beginner",
+  "estimatedHours": 35,
+  "books": [
+    {
+      "id": "b-c2a40440d5e7",
+      "why": "Deep, project-based explanation of the language."
+    },
+    {
+      "id": "b-19e3fb0c3856",
+      "why": "Short daily exercises to reinforce the basics."
+    },
+    {
+      "id": "b-a7561778cf32",
+      "why": "A style guide for writing consistent code."
+    }
+  ]
+}

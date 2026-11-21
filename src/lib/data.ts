@@ -1,6 +1,7 @@
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { join } from "node:path";
 import type { Book, CategoryRecord, LanguageRecord, LibraryMetadata, ReadableRecord, SyncHistoryEntry } from "@/types/book";
+import type { LearningPath } from "./paths";
 
 const DATA_DIR = join(process.cwd(), "public", "data");
 
@@ -16,6 +17,26 @@ let languagesCache: LanguageRecord[] | null = null;
 let readableCache: ReadableRecord[] | null = null;
 let historyCache: SyncHistoryEntry[] | null = null;
 let bookIndex: Map<string, Book> | null = null;
+let pathsCache: LearningPath[] | null = null;
+let linkHealthCache: Record<string, { status: string; httpStatus: number | null; checkedAt: string; consecutiveFailures: number }> | null = null;
+const PATH_DIR = join(process.cwd(), "data", "paths");
+
+export function getPaths(): LearningPath[] {
+  pathsCache ??= readdirSync(PATH_DIR)
+    .filter((file) => file.endsWith(".json") && file !== "schema.json")
+    .sort()
+    .map((file) => JSON.parse(readFileSync(join(PATH_DIR, file), "utf8")) as LearningPath);
+  return pathsCache;
+}
+
+export function getLinkHealth(): Record<string, { status: string; httpStatus: number | null; checkedAt: string; consecutiveFailures: number }> {
+  linkHealthCache ??= readJsonSafe<Record<string, { status: string; httpStatus: number | null; checkedAt: string; consecutiveFailures: number }>>("link-health.json", {});
+  return linkHealthCache;
+}
+
+export function getPath(id: string): LearningPath | undefined {
+  return getPaths().find((path) => path.id === id);
+}
 
 export function getBooks(): Book[] {
   booksCache ??= load<Book[]>("books.json");

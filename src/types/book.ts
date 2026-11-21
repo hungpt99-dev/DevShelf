@@ -31,6 +31,17 @@ export interface Book {
   firstSeenAt: string;
   lastSeenAt: string;
   reading: { available: boolean; type: ReaderType | null };
+  editions?: EditionRef[];
+}
+
+export interface EditionRef {
+  id: string;
+  title: string;
+  authors: string[];
+  language: string;
+  format: string;
+  readable: boolean;
+  url?: string;
 }
 
 export interface CategoryRecord {

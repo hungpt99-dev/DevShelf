@@ -11,6 +11,8 @@
     "sync": "tsx scripts/sync-books.ts",
     "sync:check": "tsx scripts/sync-books.ts --check",
     "sync:covers": "tsx scripts/fetch-covers.ts",
+    "check:links": "tsx scripts/check-links.ts",
+    "generate:feeds": "tsx scripts/generate-feeds.ts",
     "validate:data": "tsx scripts/validate-data.ts",
     "smoke": "node scripts/smoke.mjs",
     "check:readme": "node scripts/check-readme.mjs README.md",
@@ -20,7 +22,7 @@
     "test": "tsx --test scripts/lib/*.test.ts",
     "prepare-assets": "node scripts/copy-pdf-worker.mjs",
     "postinstall": "node scripts/copy-pdf-worker.mjs",
-    "prebuild": "node scripts/copy-pdf-worker.mjs"
+    "prebuild": "node scripts/copy-pdf-worker.mjs && npm run generate:feeds"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",

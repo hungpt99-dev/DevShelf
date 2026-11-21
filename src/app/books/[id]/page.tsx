@@ -4,9 +4,10 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import { BookActions } from "@/components/books/book-actions";
 import { BookCover } from "@/components/book/BookCover";
+import { ListMetaEditor } from "@/components/books/list-meta-editor";
 import { ShelfRow } from "@/components/books/shelf-row";
 import { SiteFooter } from "@/components/layout/site-footer";
-import { getBook, getBooks, getReadable, getRelatedBooks } from "@/lib/data";
+import { getBook, getBooks, getLinkHealth, getReadable, getRelatedBooks } from "@/lib/data";
 
 export function generateStaticParams() {
   return getBooks().map((book) => ({ id: book.id }));
@@ -24,6 +25,7 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
   if (!book) notFound();
   const readable = getReadable().find((item) => item.bookId === book.id) ?? null;
   const related = getRelatedBooks(book);
+  const health = getLinkHealth()[book.url];
   const format = book.reading.type === "markdown" ? "MD" : book.format === "unknown" ? "TXT" : book.format.toUpperCase();
 
   return (
@@ -52,11 +54,13 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
             </p>
 
             <div className="mt-7"><BookActions book={book} resource={readable} /></div>
+            <div className="mt-5"><ListMetaEditor book={book} /></div>
 
             <div className="mt-8 rounded-[16px] border border-line bg-card p-5 font-mono text-[11px] leading-relaxed">
               <p className="flex items-center gap-2 text-[11px] font-medium text-ink"><Github className="size-4" aria-hidden /> Catalog entry</p>
               <p className="mt-3 break-all text-muted">{book.source.file}:{book.source.line} · {book.source.heading ?? "Top level"}</p>
               <p className="mt-1 break-all"><a className="text-lime-text underline underline-offset-2" href={book.url} target="_blank" rel="noopener noreferrer">{book.url}</a></p>
+              {health?.status === "broken" && <p className="mt-2 text-[11px] text-destructive">This link may be unavailable (checked {health.checkedAt.slice(0, 10)}).</p>}
               <p className="mt-3 text-muted">format {format} · license {book.license ?? "not stated"}</p>
               {book.alternateUrls.length > 0 && (
                 <ul className="mt-3 space-y-1">
@@ -67,6 +71,28 @@ export default async function BookDetailPage({ params }: { params: Promise<{ id:
               )}
             </div>
           </div>
+        </div>
+
+        {(book.editions?.length ?? 0) > 1 && (
+          <section className="mt-12 rounded-[16px] border border-line bg-card p-5">
+            <h2 className="text-[15px] font-medium">{book.editions!.length} editions</h2>
+            <ul className="mt-4 divide-y divide-line">
+              {book.editions!.map((edition) => (
+                <li key={edition.id} className="flex flex-wrap items-center justify-between gap-3 py-2 text-[12px]">
+                  <Link href={`/books/${edition.id}`} className="hover:text-lime-text">{edition.title} · {edition.language}</Link>
+                  <span className="font-mono text-[10px] text-muted">{edition.format}{edition.readable ? " · readable" : ""}</span>
+                </li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        <div className="mt-10 flex flex-wrap gap-2">
+          <a href={`https://github.com/hungpt99-dev/DevShelf/issues/new?title=${encodeURIComponent(`Book issue: ${book.title}`)}&body=${encodeURIComponent(`Book id: ${book.id}
+Source: ${book.source.file}:${book.source.line}
+URL: ${book.url}
+
+Describe the problem:`)}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-[12px] border border-line px-3 py-2 text-[12px] hover:border-lime">Report broken link</a>
         </div>
 
         <div className="mt-16"><ShelfRow title="Related books" books={related} href={`/books?category=${encodeURIComponent(book.categories[0] ?? "")}`} /></div>

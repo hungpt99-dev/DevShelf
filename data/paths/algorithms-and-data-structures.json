@@ -1,0 +1,21 @@
+{
+  "id": "algorithms-and-data-structures",
+  "title": "Algorithms and data structures",
+  "description": "From concrete structures to algorithm design.",
+  "level": "intermediate",
+  "estimatedHours": 50,
+  "books": [
+    {
+      "id": "b-77bcc5f05e03",
+      "why": "An accessible guide with everyday examples."
+    },
+    {
+      "id": "b-d89a66ccf07b",
+      "why": "A second perspective with worked problems."
+    },
+    {
+      "id": "b-db6bbd810cd2",
+      "why": "Consolidate the core structures in one place."
+    }
+  ]
+}

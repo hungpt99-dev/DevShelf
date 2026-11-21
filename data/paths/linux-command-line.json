@@ -1,0 +1,21 @@
+{
+  "id": "linux-command-line",
+  "title": "Linux command line",
+  "description": "Get comfortable with the shell and everyday tools.",
+  "level": "beginner",
+  "estimatedHours": 20,
+  "books": [
+    {
+      "id": "b-e633908302b6",
+      "why": "A complete guide to the shell and utilities."
+    },
+    {
+      "id": "b-4b3463deea56",
+      "why": "Practice-oriented introduction to the command line."
+    },
+    {
+      "id": "b-55a89179f2d1",
+      "why": "Move on to shell tooling and the wider environment."
+    }
+  ]
+}

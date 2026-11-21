@@ -1,0 +1,21 @@
+{
+  "id": "learn-rust",
+  "title": "Learn Rust",
+  "description": "A practical sequence from first syntax to asynchronous Rust.",
+  "level": "beginner",
+  "estimatedHours": 40,
+  "books": [
+    {
+      "id": "b-91d1bd89eabf",
+      "why": "A gentler first pass before the reference book."
+    },
+    {
+      "id": "b-c0a9df6d6728",
+      "why": "The canonical reference for ownership and traits."
+    },
+    {
+      "id": "b-054494075d88",
+      "why": "Move on to async once the basics are comfortable."
+    }
+  ]
+}

@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import type { Book, LibraryMetadata, ReadableRecord, SyncHistoryEntry } from "../src/types/book";
 import { bookIdFor, deduplicate, normalizeUrl, parseMarkdown } from "./lib/parse-books";
 import { diffBooks } from "./lib/sync-diff";
+import { groupEditions } from "./lib/editions";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const CACHE = join(ROOT, ".cache");
@@ -277,6 +278,13 @@ function main(): void {
       mkdirSync(dirname(item.to), { recursive: true });
       copyFileSync(item.from, item.to);
     }
+  }
+
+  const groupedWorks = groupEditions(books as Parameters<typeof groupEditions>[0]);
+  const editionsById = new Map(groupedWorks.map((work) => [work.id, work.editions]));
+  for (const book of books) {
+    const editions = editionsById.get(book.id);
+    if (editions && editions.length > 1) book.editions = editions;
   }
 
   const categoryCounts = new Map<string, number>();

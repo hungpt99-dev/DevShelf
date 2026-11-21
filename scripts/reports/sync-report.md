@@ -1,6 +1,6 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-21T09:25:46.837Z
+- Generated: 2026-11-21T16:41:29.546Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
 - Upstream commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
 - Previous commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
@@ -92,9 +92,6 @@
 
 | Source URL | Result | Book |
 | --- | --- | --- |
-| https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md | ok (188 KiB) | b-c085be43677c |
-| http://autotelicum.github.io/Smooth-CoffeeScript/SmoothCoffeeScript.html | ok (613 KiB) | b-1e82a929fe0f |
-| https://www.openmymind.net/assets/go/go.pdf | ok (242 KiB) | b-9645f99c21e5 |
 
 ## Method
 

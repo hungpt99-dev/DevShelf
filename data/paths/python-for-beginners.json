@@ -1,0 +1,25 @@
+{
+  "id": "python-for-beginners",
+  "title": "Python for beginners",
+  "description": "A short route from first script to useful automation.",
+  "level": "beginner",
+  "estimatedHours": 30,
+  "books": [
+    {
+      "id": "b-26b00ca01bd4",
+      "why": "A compact, low-friction first book."
+    },
+    {
+      "id": "b-ede1a1a5b3f5",
+      "why": "Reinforce the basics with a beginner tutorial."
+    },
+    {
+      "id": "b-d03f60eaa8b1",
+      "why": "A widely used free Python book for continued reading."
+    },
+    {
+      "id": "b-fd305de0a46f",
+      "why": "Apply Python to everyday automation."
+    }
+  ]
+}

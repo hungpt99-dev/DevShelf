@@ -1,0 +1,21 @@
+{
+  "id": "git-and-tooling",
+  "title": "Git and tooling",
+  "description": "Understand version control before scaling up a workflow.",
+  "level": "beginner",
+  "estimatedHours": 12,
+  "books": [
+    {
+      "id": "b-3b71368ae830",
+      "why": "The standard Git book, chapter by chapter."
+    },
+    {
+      "id": "b-1d362c84563a",
+      "why": "A short primer for a fast first read."
+    },
+    {
+      "id": "b-c6227ad474f1",
+      "why": "Visual explanations of branching and merging."
+    }
+  ]
+}
