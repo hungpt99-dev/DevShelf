@@ -1,19 +1,19 @@
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: light)" srcset="docs/assets/banner-light.svg">
-    <img src="docs/assets/banner-dark.svg" alt="DevShelf — your library for learning to code" width="100%">
+    <img src="docs/assets/banner-dark.svg" alt="DevShelf — read the best programming books, free" width="100%">
   </picture>
 </p>
 
 <h1 align="center">DevShelf</h1>
 
 <p align="center">
-  <strong>A free programming books library and reader, built from open data.</strong><br>
-  Thousands of real catalog resources, an in-app Markdown/HTML/PDF reader, and a private reading list that never leaves your browser.
+  <strong>Read the best programming books, free.</strong><br>
+  A black-and-white library with one lime accent: real catalog resources, an in-app Markdown/HTML/PDF reader, and a private reading list that never leaves your browser.
 </p>
 
 <p align="center">
-  <a href="https://github.com/hungpt99-dev/DevShelf/actions/workflows/sync-books.yml"><img src="https://github.com/hungpt99-dev/DevShelf/actions/workflows/sync-books.yml/badge.svg" alt="Sync workflow"></a>
+  <img src="https://img.shields.io/badge/deploy-GitHub%20Pages-brightgreen" alt="Deployed on GitHub Pages">
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
   <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/Tailwind-v4-38bdf8" alt="Tailwind CSS v4">
@@ -44,18 +44,18 @@ Every record keeps its original URL, source file, line and heading. Titles, auth
 ## Screenshots
 
 <p align="center">
-  <img src="docs/screenshots/home.png" alt="DevShelf editorial homepage" width="48%">
+  <img src="docs/screenshots/home.png" alt="DevShelf homepage with generated book covers" width="48%">
   <img src="docs/screenshots/catalog.png" alt="Catalog with search, filters and typographic book cards" width="48%">
 </p>
-<p align="center"><sub>Homepage with sync status · Catalog with 4,735 resources and local filters</sub></p>
+<p align="center"><sub>Homepage with live sync chip and generated covers · Catalog with 4,735 resources and local filters</sub></p>
 
 <p align="center">
-  <img src="docs/screenshots/markdown-reader.png" alt="Markdown reader with table of contents and code formatting" width="48%">
+  <img src="docs/screenshots/markdown-reader.png" alt="Markdown reader with table of contents and copyable code blocks" width="48%">
   <img src="docs/screenshots/pdf-reader.png" alt="PDF reader with page navigation and zoom" width="48%">
 </p>
-<p align="center"><sub>Markdown reader with 226-chapter TOC · PDF reader with page controls</sub></p>
+<p align="center"><sub>Markdown reader with 226-chapter TOC and code-block tools · PDF reader showing page 10 of 84</sub></p>
 
-All four images are captures of the deployed site at [hungpt99-dev.github.io/DevShelf](https://hungpt99-dev.github.io/DevShelf/), regenerated with `node scripts/capture-screenshots.mjs`.
+All four images are captures of the deployed site at [hungpt99-dev.github.io/DevShelf](https://hungpt99-dev.github.io/DevShelf/), regenerated with `npm run capture:screenshots` after the UI restyle.
 
 ## Quick start
 
@@ -89,10 +89,10 @@ npm run validate:data # verify indexes, attribution and bundled content
 
 | Surface | Role | What it adds |
 | --- | --- | --- |
-| Home | Editorial entry point | Last sync timestamp, totals, source link, curated deterministic picks |
+| Home | Book-cover-first entry point | Sync chip, generated covers, catalog stats, deterministic featured shelves |
 | Explore | Full catalog | Search, filters, sort, availability, load-more, honest empty states |
 | Book detail | Provenance | Source file/line, license when stated, alternate links, related books |
-| Reader | Distraction-free reading | TOC, themes, font controls, keyboard nav, PDF zoom/pages, saved position |
+| Reader | Distraction-free reading | TOC, themes, font controls, keyboard nav, copyable code blocks, PDF zoom/pages, saved position |
 | Reading list | Local personal library | Saved / reading / completed, progress, continue reading, remove |
 | Settings | Preferences and data | Theme, font, width, line height, sidebar, JSON export/import |
 
@@ -104,7 +104,7 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Categories / languages | 498 / 46 | `public/data/metadata.json` |
 | Bundled readable books | 3 | `public/data/readable.json` |
 | Unit tests | 8 passing | `npm test` |
-| Static build | exits 0 | `npm run build` (output in `out/`) |
+| Static build | exit code 0; 9,477 static pages | `npm run build` (output in `out/`) |
 | HTTP smoke checks | 19/19 | `npm run smoke` against a local `out/` server |
 
 Counts are derived from the committed catalog snapshot, not typed into the UI. The homepage reads the same files.
@@ -114,9 +114,10 @@ Counts are derived from the committed catalog snapshot, not typed into the UI. T
 | File | Controls | Guide |
 | --- | --- | --- |
 | `scripts/reading-sources.json` | The only books whose content may be bundled; preserves catalog link, raw download URL, attribution and license | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) |
-| `.github/workflows/sync-books.yml` | 6-hour schedule, manual dispatch, validation and Pages deployment | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
+| `.github/workflows/sync-books.yml` | 6-hour schedule, manual dispatch, validation, GitHub Pages and optional Cloudflare deployment | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | `next.config.ts` | Static export and optional `NEXT_PUBLIC_BASE_PATH` for project Pages sites | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | `public/data/*.json` | Generated catalog, categories, languages, readable map, metadata and sync history | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| `docs/assets/` | Product mark and light/dark README banners | [README](#screenshots) |
 
 ## Automation
 
@@ -125,9 +126,9 @@ The sync workflow runs every 6 hours and on manual dispatch (`force=true` rebuil
 1. `git ls-remote` resolves the upstream `main` SHA and compares it with `metadata.json.commit`.
 2. A tarball pinned to that SHA is parsed; added, updated and removed records are diffed by stable ID.
 3. All indexes and the sync report are regenerated; `npm run validate:data` gates deployment.
-4. Only when something changed are the dataset committed, the site built and GitHub Pages redeployed. With `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set as repo secrets, the workflow rebuilds for the site root and also deploys to Cloudflare Pages (`devshelf-hungpt99`).
+4. Except on forced manual runs, the dataset is committed and Pages are rebuilt only when records change. With `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set as repo secrets, the workflow also rebuilds for the site root and deploys to Cloudflare Pages (`devshelf-hungpt99`).
 
-Network or parse failures stop before any file is written, so the last known good dataset and deployment stay live. The browser never calls GitHub or any API, and no token is present in frontend code — credentials exist only in the Actions runner. Cloudflare setup details are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+Network or parse failures stop before any file is written, so the last known good dataset and deployment stay live. The app fetches only local static catalog files; it does not call GitHub or require API tokens at runtime. Outbound book links open the original resource in a new tab. No token is present in frontend code — credentials exist only in the Actions runner. Cloudflare setup details are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Documentation
 
@@ -136,7 +137,7 @@ Network or parse failures stop before any file is written, so the last known goo
 | **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Deployment](docs/DEPLOYMENT.md) |
 | **Trusting it** | [Data sources & attribution](docs/DATA_SOURCES.md) · [Sync report](scripts/reports/sync-report.md) · [MIT license](LICENSE) |
 | **Building on it** | [Architecture](ARCHITECTURE.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
-| **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Validation script](scripts/validate-data.ts) |
+| **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
 
 ## Architecture
 
@@ -148,7 +149,9 @@ flowchart LR
   C --> E["Next.js static export"]
   D --> E
   E --> F["GitHub Pages"]
+  E -.->|"optional"| I["Cloudflare Pages"]
   F --> G["Browser: catalog, search, reader"]
+  I --> G
   G --> H[("IndexedDB (local only)")]
 ```
 
@@ -159,23 +162,25 @@ flowchart LR
 | Area | State |
 | --- | --- |
 | Catalog ingestion, IDs, dedupe, diff history | **Implemented** — deterministic parser with 8 unit tests |
+| Black/white/lime UI with generated covers | **Implemented** — verified at 375, 768 and 1280 px |
 | Search, filters, book details, related books | **Implemented** — entirely client-side |
 | Markdown reader | **Implemented** — 226-chapter TOC in the bundled Clean ABAP book |
 | HTML reader | **Implemented** — sanitized DOM with a 50-chapter TOC |
 | PDF reader | **Implemented** — canvas pages, zoom, fullscreen, saved page; no text-selection layer yet |
 | External resources | **Implemented** — detail page links to the original source; never scraped |
 | Progress, bookmarks, preferences, export/import | **Implemented** — Dexie/IndexedDB, no account |
-| Scheduled sync + conditional Pages deploy | **Implemented** — green workflow on the current head |
-| Recently added before automation | **Partial** — first snapshot has no prior baseline; history grows each sync |
+| Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the current head |
+| Recently added shelf | **Implemented** — real sync history; honest empty state when a sync adds nothing |
+| Cloudflare Pages deploy | **Partial** — secrets and steps are wired, but the deploy fails with auth code 10000 until the token also has `User → User Details:Read` and `User → Memberships:Read` |
 | PDF text layer and annotations | **Not implemented** — canvas rendering only; page navigation works |
 | Accounts, cloud sync, runtime scraping | **Not implemented by design** — no backend and no site access bypass |
-| Descriptions, covers, ratings, popularity | **Not implemented** — the source catalog does not provide them |
+| Descriptions, covers, ratings, popularity | **Not implemented** — the source catalog does not provide them; card covers are generated typography, not fake book art |
 
 ## Security and privacy
 
 - No backend, REST API, database server, authentication or analytics.
 - Search queries and reading positions never leave the browser.
-- `GITHUB_TOKEN` exists only inside the Actions runner; nothing token-like ships to `out/`.
+- `GITHUB_TOKEN` and Cloudflare credentials exist only inside the Actions runner; nothing token-like ships to `out/`.
 - Synchronization touches only `public/data/` and allowlisted `public/content/`; IndexedDB user data is never modified.
 - Bundled HTML is sanitized with DOMPurify; external links use `rel="noopener noreferrer"`.
 
@@ -194,12 +199,14 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 
 ## Evidence
 
-- GitHub Actions: successful forced sync/deploy run `44881785530` and later green validation runs on the current head.
+- GitHub Actions: green sync/deploy run `44887877659` on the pre-restyle head; run `44889512574` deployed the restyled site to GitHub Pages, then failed only at the optional Cloudflare step (token permissions, see Status).
+- The live GitHub Pages URL serves the restyled homepage, catalog and PDF reader (checked after the deploy).
 - `npm run smoke` against the served static export: 19/19 checks.
-- Browser verification: catalog loads 4,735 resources; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips.
+- Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 
 ## Roadmap
 
+- Grant the missing Cloudflare token permissions and rerun the workflow with `force=true`.
 - PDF text layer and annotation rendering.
 - Expand the reading allowlist with more explicitly licensed source-linked books.
 - Optional custom domain and pagination/virtualization tuning for slower devices.

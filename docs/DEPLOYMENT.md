@@ -25,7 +25,7 @@ The sync workflow deploys to Cloudflare Pages on every data-changing run when th
 
 | Secret | Value | Token permission |
 | --- | --- | --- |
-| `CLOUDFLARE_API_TOKEN` | Cloudflare API token | `Account → Cloudflare Pages → Edit` |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token | `Account → Cloudflare Pages → Edit`, plus `User → User Details → Read` and `User → Memberships → Read` (Wrangler uses these to verify the account) |
 | `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID | — |
 
 Add them in **Repo Settings → Secrets and variables → Actions → New repository secret**. The workflow then:
@@ -43,6 +43,8 @@ npm ci
 npm run build
 npx wrangler pages deploy out --project-name=devshelf-hungpt99 --branch=main
 ```
+
+If `wrangler` reports `Authentication error [code: 10000]`, the token is missing the two `User → … → Read` permissions above — add them in the Cloudflare dashboard and rerun the workflow with `force=true`.
 
 `wrangler` is installed by the GitHub Action; no local install is needed for CI. If you prefer Cloudflare's Git integration instead, set build command `npm run build`, output directory `out`, and leave `NEXT_PUBLIC_BASE_PATH` unset; note that Git integration deploys on every push, not only when catalog data changes.
 
