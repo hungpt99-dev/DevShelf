@@ -1,6 +1,6 @@
 # DevShelf feature plan
 
-Status: Phases 0–2 complete. Phase 2 awaits review before Phase 3.
+Status: Phases 0–4 complete and verified locally. See [docs/reading-companion.md](reading-companion.md) for the Phase 3–4 implementation.
 
 ## Recon snapshot
 
@@ -20,7 +20,7 @@ Other committed assets: `public/content/` (the three bundled books), `public/ima
 
 ### Dexie schema (`src/lib/db/db.ts`)
 
-Version 1 only, database `devshelf`:
+Version 3, database `devshelf` (v2 added shelves/tags/notes/ratings; v3 added highlights and sessions without rewriting existing records):
 
 - `books`: `id`, `title`, `metadata` — key `id`, index `title`.
 - `readingProgress`: `bookId`, `chapterId`, `position`, `percentage`, `updatedAt` — key `bookId`.

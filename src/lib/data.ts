@@ -18,6 +18,7 @@ let readableCache: ReadableRecord[] | null = null;
 let historyCache: SyncHistoryEntry[] | null = null;
 let bookIndex: Map<string, Book> | null = null;
 let pathsCache: LearningPath[] | null = null;
+let coverMetadataCache: Record<string, { description?: string; firstPublishYear?: number; isbn?: string; pageCount?: number; sources: Record<string, string> }> | null = null;
 let linkHealthCache: Record<string, { status: string; httpStatus: number | null; checkedAt: string; consecutiveFailures: number }> | null = null;
 const PATH_DIR = join(process.cwd(), "data", "paths");
 
@@ -27,6 +28,11 @@ export function getPaths(): LearningPath[] {
     .sort()
     .map((file) => JSON.parse(readFileSync(join(PATH_DIR, file), "utf8")) as LearningPath);
   return pathsCache;
+}
+
+export function getCoverMetadata() {
+  coverMetadataCache ??= readJsonSafe<Record<string, { description?: string; firstPublishYear?: number; isbn?: string; pageCount?: number; sources: Record<string, string> }>>("cover-metadata.json", {});
+  return coverMetadataCache;
 }
 
 export function getLinkHealth(): Record<string, { status: string; httpStatus: number | null; checkedAt: string; consecutiveFailures: number }> {

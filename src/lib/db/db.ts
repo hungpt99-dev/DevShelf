@@ -45,6 +45,28 @@ export interface BookmarkRecord {
   createdAt: string;
 }
 
+export interface HighlightRecord {
+  id: string;
+  bookId: string;
+  chapterId: string;
+  quote: string;
+  prefix: string | null;
+  suffix: string | null;
+  startOffset: number;
+  endOffset: number;
+  color: "lime" | "blue" | "amber" | "rose";
+  note: string;
+  createdAt: string;
+}
+
+export interface SessionRecord {
+  id: string;
+  date: string;
+  startedAt: string;
+  endedAt: string;
+  activeMs: number;
+}
+
 export interface PreferenceRecord {
   key: string;
   value: unknown;
@@ -85,6 +107,8 @@ class DevShelfDatabase extends Dexie {
   bookmarks!: Table<BookmarkRecord, string>;
   preferences!: Table<PreferenceRecord, string>;
   shelves!: Table<ShelfRecord, string>;
+  highlights!: Table<HighlightRecord, string>;
+  sessions!: Table<SessionRecord, string>;
 
   constructor() {
     super("devshelf");
@@ -113,6 +137,16 @@ class DevShelfDatabase extends Dexie {
         startedAt: record.startedAt ?? null,
         finishedAt: record.finishedAt ?? null,
       })));
+    });
+    this.version(3).stores({
+      books: "id,title",
+      readingProgress: "bookId,updatedAt",
+      readingList: "bookId,status,addedAt,shelfId",
+      bookmarks: "id,bookId,chapterId",
+      preferences: "key",
+      shelves: "id,name,createdAt",
+      highlights: "id,bookId,chapterId,createdAt",
+      sessions: "id,date,startedAt",
     });
   }
 }

@@ -3,8 +3,8 @@ import type {
 } from "./db";
 
 export interface V2Export {
-  version: 2;
-  schemaVersion: 2;
+  version: 2 | 3;
+  schemaVersion: 2 | 3;
   exportedAt: string;
   books: LocalBook[];
   readingProgress: ProgressRecord[];
@@ -48,12 +48,12 @@ export function upgradeV1ToV2(raw: {
 export function normalizeExport(value: unknown): V2Export {
   if (!value || typeof value !== "object") throw new Error("Invalid export file");
   const raw = value as Record<string, unknown>;
-  if (raw.version !== 1 && raw.version !== 2) throw new Error("Unsupported export version");
+  if (raw.version !== 1 && raw.version !== 2 && raw.version !== 3) throw new Error("Unsupported export version");
   if (!Array.isArray(raw.books) || !Array.isArray(raw.readingList)) throw new Error("Invalid export file");
 
   const result: V2Export = {
-    version: 2,
-    schemaVersion: 2,
+    version: 3,
+    schemaVersion: 3,
     exportedAt: typeof raw.exportedAt === "string" ? raw.exportedAt : new Date().toISOString(),
     books: raw.books as LocalBook[],
     readingProgress: array(raw.readingProgress) as ProgressRecord[],

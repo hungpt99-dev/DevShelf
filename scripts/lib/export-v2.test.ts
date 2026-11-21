@@ -26,7 +26,7 @@ test("v1 exports are upgraded to v2 without losing arrays", () => {
 
 test("normalizeExport accepts v1 and marks the import source", () => {
   const result = normalizeExport(v1);
-  assert.equal(result.version, 2);
+  assert.equal(result.version, 3);
   assert.equal(result.importedFromVersion, 1);
   assert.equal(result.readingProgress[0].percentage, 12);
 });
@@ -40,7 +40,7 @@ test("normalizeExport preserves a v2 file including new arrays", () => {
 });
 
 test("normalizeExport rejects unsupported or malformed files", () => {
-  assert.throws(() => normalizeExport({ version: 3 }), /Unsupported export version/);
+  assert.throws(() => normalizeExport({ version: 4 }), /Unsupported export version/);
   assert.throws(() => normalizeExport({ version: 2, books: [], readingList: null }), /Invalid export file/);
   assert.throws(() => normalizeExport(null), /Invalid export file/);
 });

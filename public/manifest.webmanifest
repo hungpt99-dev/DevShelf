@@ -1,0 +1,13 @@
+{
+  "name": "DevShelf",
+  "short_name": "DevShelf",
+  "description": "A free programming books library and reader",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#0e0e0e",
+  "theme_color": "#c8f542",
+  "icons": [
+    { "src": "images/default-cover.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}

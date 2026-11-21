@@ -2,16 +2,18 @@
 
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type CSSProperties } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import {
-  ArrowLeft, BookmarkPlus, ChevronLeft, ChevronRight, List, Loader2,
-  Maximize2, Minus, Plus, Type,
+  ArrowLeft, BookmarkPlus, ChevronLeft, ChevronRight, Eye, Keyboard, List, Loader2,
+  Maximize2, Minus, NotebookPen, Plus, Type,
 } from "lucide-react";
 import { HtmlContent } from "@/components/reader/html-content";
 import { MarkdownContent } from "@/components/reader/markdown-content";
 import { usePreferences } from "@/providers/preferences-provider";
 import { useUIStore } from "@/stores/ui-store";
-import { addBookmark, getProgress, rememberBook, saveProgress } from "@/lib/db/operations";
+import { addBookmark, getPreferenceValue, getProgress, recordSession, rememberBook, saveProgress, setPreferenceValue } from "@/lib/db/operations";
+const HighlightLayer = dynamic(() => import("@/components/reader/highlight-layer").then((module) => module.HighlightLayer), { ssr: false });
+import { countWords, remainingMinutes } from "@/lib/reading-time";
 import { selectProvider } from "@/lib/readers/providers";
 import type { ReaderContent } from "@/lib/readers/types";
 import { cn } from "@/lib/utils";
@@ -35,6 +37,10 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
   const [restored, setRestored] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [note, setNote] = useState("");
+  const [focusMode, setFocusMode] = useState(false);
+  const [shortcutsOpen, setShortcutsOpen] = useState(false);
+  const [notesOpen, setNotesOpen] = useState(false);
+  const sessionStart = useRef<number | null>(null);
   const saveTimer = useRef<number | null>(null);
 
   useEffect(() => {
@@ -83,8 +89,14 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
       if (heading.getBoundingClientRect().top <= 140) index = headingIndex;
     });
     setCurrentChapter(index);
-    persist(headings[index]?.id ?? null, window.scrollY, percentage);
-  }, [content, restored, persist]);
+    const chapterId = headings[index]?.id ?? null;
+    persist(chapterId, window.scrollY, percentage);
+    if (chapterId) {
+      void getPreferenceValue<Record<string, number>>(`chapterScroll:${book.id}`).then((positions) => {
+        void setPreferenceValue(`chapterScroll:${book.id}`, { ...(positions ?? {}), [chapterId]: window.scrollY });
+      });
+    }
+  }, [content, restored, persist, book.id]);
 
   useEffect(() => {
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -125,7 +137,9 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
       else if (event.key === "-") update("fontSize", Math.max(14, effective.fontSize - 1));
       else if (event.key.toLowerCase() === "t") cycleTheme();
       else if (event.key.toLowerCase() === "f") toggleFullscreen();
-      else if (event.key === "Escape") setTocOpen(false);
+      else if (event.key.toLowerCase() === "z") setFocusMode((value) => !value);
+      else if (event.key === "?") setShortcutsOpen(true);
+      else if (event.key === "Escape") { setTocOpen(false); setShortcutsOpen(false); setFocusMode(false); }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -144,17 +158,47 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
     persist(null, page, percentage);
   }, [persist]);
 
-  const chapters = content?.chapters ?? [];
+  const chapters = useMemo(() => content?.chapters ?? [], [content]);
+  const totalWords = countWords(content?.markdown ?? content?.html ?? "");
+  const readMinutes = remainingMinutes(totalWords, Math.round((totalWords * progress) / 100));
+
+  useEffect(() => {
+    if (!effective.readingStats) return;
+    sessionStart.current = Date.now();
+    const finish = () => {
+      if (sessionStart.current === null) return;
+      const activeMs = Math.max(0, Math.min(Date.now() - sessionStart.current, 4 * 60 * 60 * 1000));
+      const startedAt = new Date(sessionStart.current).toISOString();
+      void recordSession({ id: `s-${sessionStart.current}`, date: startedAt.slice(0, 10), startedAt, endedAt: new Date().toISOString(), activeMs });
+      sessionStart.current = null;
+    };
+    const onVisibility = () => { if (document.hidden) finish(); else sessionStart.current = Date.now(); };
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => { document.removeEventListener("visibilitychange", onVisibility); finish(); };
+  }, [effective.readingStats, book.id]);
+
+  useEffect(() => {
+    let active = true;
+    void getPreferenceValue<Record<string, number>>(`chapterScroll:${book.id}`).then((positions) => {
+      if (!active || !positions) return;
+      const id = chapters[currentChapter]?.id;
+      if (id && typeof positions[id] === "number") window.scrollTo({ top: positions[id], behavior: "auto" });
+    });
+    return () => { active = false; };
+  }, [book.id, currentChapter, chapters]);
 
   return (
-    <div className="reader-scope min-h-screen" data-reader-theme={effective.readerTheme} style={style}>
+    <div className={cn("reader-scope min-h-screen", focusMode && "focus-reader")} data-reader-theme={effective.readerTheme} style={style}>
       <div className="sticky top-16 z-30 flex h-12 items-center gap-2 border-b border-line bg-background/85 px-3 backdrop-blur-xl">
         <Link href="/books" className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[10px] border border-line px-2.5 text-[12px] hover:border-lime">
           <ArrowLeft className="size-4" aria-hidden /> <span className="hidden sm:inline">Library</span>
         </Link>
         <h1 className="min-w-0 flex-1 truncate px-1 text-[13px] font-medium">{book.title}</h1>
-        <span className="hidden shrink-0 font-mono text-[10px] text-muted sm:block">{Math.round(progress)}%</span>
+        <span className="hidden shrink-0 font-mono text-[10px] text-muted sm:block">{Math.round(progress)}% · {readMinutes} min left</span>
         <div className="flex shrink-0 items-center gap-1">
+          <button type="button" onClick={() => setFocusMode((value) => !value)} className="flex size-8 items-center justify-center rounded-[10px] border border-line hover:border-lime" aria-label="Toggle focus mode"><Eye className="size-4" aria-hidden /></button>
+          <button type="button" onClick={() => setNotesOpen((value) => !value)} className="flex size-8 items-center justify-center rounded-[10px] border border-line hover:border-lime" aria-label="Highlights and notes"><NotebookPen className="size-4" aria-hidden /></button>
+          <button type="button" onClick={() => setShortcutsOpen(true)} className="flex size-8 items-center justify-center rounded-[10px] border border-line hover:border-lime" aria-label="Keyboard shortcuts"><Keyboard className="size-4" aria-hidden /></button>
           <button type="button" onClick={() => update("fontSize", Math.max(14, effective.fontSize - 1))} className="flex size-8 items-center justify-center rounded-[10px] border border-line hover:border-lime" aria-label="Decrease font size"><Minus className="size-4" aria-hidden /></button>
           <button type="button" onClick={() => update("fontSize", Math.min(28, effective.fontSize + 1))} className="flex size-8 items-center justify-center rounded-[10px] border border-line hover:border-lime" aria-label="Increase font size"><Plus className="size-4" aria-hidden /></button>
           <button type="button" onClick={cycleTheme} className="flex size-8 items-center justify-center rounded-[10px] border border-line hover:border-lime" aria-label={`Reading theme: ${effective.readerTheme}`}><Type className="size-4" aria-hidden /></button>
@@ -224,7 +268,7 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
         )}
         {content?.type === "markdown" && <MarkdownContent markdown={content.markdown ?? ""} assetBase={content.assetBase} />}
         {content?.type === "html" && <HtmlContent html={content.html ?? ""} />}
-        {content?.type === "pdf" && <PdfReader url={content.pdfUrl ?? ""} initialPage={initialPage} onProgress={pdfProgress} />}
+        {content?.type === "pdf" && <PdfReader url={content.pdfUrl ?? ""} bookId={book.id} initialPage={initialPage} onProgress={pdfProgress} />}
 
         {content && (
           <footer className="mx-auto mt-12 max-w-[var(--reader-width)] border-t border-line pt-5 font-mono text-[10px] leading-relaxed text-muted">
@@ -234,6 +278,23 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
           </footer>
         )}
       </main>
+
+      <HighlightLayer bookId={book.id} open={notesOpen} onToggle={() => setNotesOpen((value) => !value)} />
+
+      {shortcutsOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" role="dialog" aria-modal="true" aria-label="Keyboard shortcuts">
+          <div className="w-full max-w-sm rounded-[16px] border border-line bg-card p-5">
+            <h2 className="text-[15px] font-medium">Keyboard shortcuts</h2>
+            <ul className="mt-4 space-y-2 text-[12px] text-muted">
+              <li>← / → — previous / next chapter</li>
+              <li>+ / − — font size</li>
+              <li>T — reader theme · F — fullscreen</li>
+              <li>Z — focus mode · ? — this dialog · Esc — close</li>
+            </ul>
+            <button type="button" onClick={() => setShortcutsOpen(false)} className="mt-5 rounded-[12px] border border-line px-3 py-2 text-[12px] hover:border-lime">Close</button>
+          </div>
+        </div>
+      )}
 
       <nav className="fixed bottom-0 left-0 right-0 z-20 flex items-center justify-between gap-3 border-t border-line bg-background/90 px-4 py-2.5 backdrop-blur-xl" aria-label="Chapter navigation">
         <button type="button" disabled={currentChapter <= 0 || content?.type === "pdf"} onClick={() => goToChapter(currentChapter - 1)} className="inline-flex h-8 items-center gap-1 rounded-[10px] border border-line px-3 text-[12px] hover:border-lime disabled:opacity-40">

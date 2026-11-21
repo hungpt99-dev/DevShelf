@@ -293,6 +293,12 @@
 .code-block-copy:hover { border-color: var(--lime); }
 .code-block pre { margin: 0; border: 0; border-radius: 0; }
 
+.focus-reader > div:first-child,
+.focus-reader aside,
+.focus-reader nav[aria-label="Chapter navigation"] { display: none; }
+.focus-reader main { padding-top: 2rem; }
+mark[data-highlight] { color: inherit; background: rgba(200,245,66,0.3); border-radius: 3px; padding: 0 2px; }
+
 .hljs-comment, .hljs-quote { color: #8a8a82; font-style: italic; }
 .hljs-keyword, .hljs-selector-tag, .hljs-built_in { color: #c8f542; font-weight: 500; }
 .hljs-string, .hljs-attr { color: #a7d68a; }

@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { GistSyncPanel } from "@/components/sync/gist-sync-panel";
 import { exportData, importData } from "@/lib/db/operations";
 import { useI18n } from "@/lib/i18n";
 import { usePreferences } from "@/providers/preferences-provider";
@@ -90,12 +91,20 @@ export function SettingsForm() {
           <Switch checked={effective.loadCoverImages} onCheckedChange={(checked) => update("loadCoverImages", checked)} aria-label="Load cover images from Open Library" />
         </Row>
         <Row label={t("settings.offline")} description={t("settings.offlineDescription")}>
-          <Switch checked={effective.offlineMode} onCheckedChange={(checked) => update("offlineMode", checked)} aria-label={t("settings.offline")} />
+          <div className="flex items-center gap-3">
+            <button type="button" onClick={async () => { const keys = await caches.keys(); await Promise.all(keys.filter((key) => key.startsWith("devshelf-")).map((key) => caches.delete(key))); setMessage("Offline data cleared."); }} className="text-[12px] link-lime">Clear offline data</button>
+            <Switch checked={effective.offlineMode} onCheckedChange={(checked) => update("offlineMode", checked)} aria-label={t("settings.offline")} />
+          </div>
         </Row>
         <Row label={t("settings.stats")} description={t("settings.statsDescription")}>
-          <Switch checked={effective.readingStats} onCheckedChange={(checked) => update("readingStats", checked)} aria-label={t("settings.stats")} />
+          <div className="flex items-center gap-3">
+            <a href="/stats" className="text-[12px] link-lime">View stats</a>
+            <Switch checked={effective.readingStats} onCheckedChange={(checked) => update("readingStats", checked)} aria-label={t("settings.stats")} />
+          </div>
         </Row>
       </section>
+
+      <GistSyncPanel />
 
       <section className="rounded-[16px] border border-line bg-card p-5">
         <h2 className="text-[15px] font-medium">{t("settings.yourData")}</h2>

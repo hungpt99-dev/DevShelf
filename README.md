@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
   <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/Tailwind-v4-38bdf8" alt="Tailwind CSS v4">
-  <img src="https://img.shields.io/badge/tests-43%20passing-brightgreen" alt="43 tests passing">
+  <img src="https://img.shields.io/badge/tests-59%20passing-brightgreen" alt="59 tests passing">
   <img src="https://img.shields.io/badge/static-export-orange" alt="Static export">
   <img src="https://img.shields.io/badge/data-CC%20BY%204.0-orange" alt="Data license CC BY 4.0">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
@@ -108,9 +108,9 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Books from source | 4,735 | `npm run validate:data` |
 | Categories / languages | 498 / 46 | `public/data/metadata.json` |
 | Bundled readable books | 3 | `public/data/readable.json` |
-| Unit tests | 43 passing | `npm test` |
-| Static build | exit code 0; 9,477 static pages | `npm run build` (output in `out/`) |
-| HTTP smoke checks | 30/30 | `npm run smoke` against a local `out/` server |
+| Unit tests | 59 passing | `npm test` |
+| Static build | exit code 0; 9,488 static pages | `npm run build` (output in `out/`) |
+| HTTP smoke checks | 35/35 | `npm run smoke` against a local `out/` server |
 | Cover matches in snapshot | 1 | `Object.keys(require("./public/data/covers.json")).length` |
 
 Counts are derived from the committed catalog snapshot, not typed into the UI. The homepage reads the same files.
@@ -145,7 +145,7 @@ Network or parse failures stop before any file is written, so the last known goo
 
 | | |
 | --- | --- |
-| **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Reading list](docs/reading-list.md) · [Learning paths](docs/paths.md) · [Sharing](docs/sharing.md) · [Deployment](docs/DEPLOYMENT.md) |
+| **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Reading list](docs/reading-list.md) · [Reading companion](docs/reading-companion.md) · [Learning paths](docs/paths.md) · [Sharing](docs/sharing.md) · [Deployment](docs/DEPLOYMENT.md) |
 | **Trusting it** | [Data sources & attribution](docs/DATA_SOURCES.md) · [Sync report](scripts/reports/sync-report.md) · [MIT license](LICENSE) |
 | **Building on it** | [Architecture](ARCHITECTURE.md) · [Feature plan](docs/PLAN-features.md) · [UI localization](docs/i18n.md) · [URL filters](docs/filters.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
 | **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Link health](docs/link-health.md) · [Cover fetcher](scripts/fetch-covers.ts) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
@@ -175,13 +175,13 @@ flowchart LR
 
 | Area | State |
 | --- | --- |
-| Phased feature plan | **Draft** — Phase 0 complete; Phases 1–4 await approval ([plan](docs/PLAN-features.md)) |
+| Phased feature plan | **Complete** — Phases 0–4 verified locally ([plan](docs/PLAN-features.md)) |
 | Catalog ingestion, IDs, dedupe, diff history | **Implemented** — deterministic parser with unit tests |
 | Black/white/lime UI with generated covers | **Implemented** — verified at 375, 768 and 1280 px |
 | Search, filters, book details, related books | **Implemented** — entirely client-side |
 | Markdown reader | **Implemented** — 226-chapter TOC in the bundled Clean ABAP book |
 | HTML reader | **Implemented** — sanitized DOM with a 50-chapter TOC |
-| PDF reader | **Implemented** — canvas pages, zoom, fullscreen, saved page; no text-selection layer yet |
+| PDF reader | **Implemented** — canvas pages, text layer, selection annotations, zoom, fullscreen, saved page |
 | External resources | **Implemented** — detail page links to the original source; never scraped |
 | Progress, bookmarks, preferences, export/import | **Implemented** — Dexie/IndexedDB, no account |
 | Reading list v2 | **Implemented** — Dexie v2 migration, shelves, tags, notes, ratings, dates, filters and exports |
@@ -193,22 +193,27 @@ flowchart LR
 | Contribute buttons | **Implemented** — issue templates and prefilled links from the book page and footer |
 | Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the last deployed head; current head awaits the next workflow run |
 | URL-driven filters and i18n | **Implemented** — shareable query params, browser-language default, English/Vietnamese UI catalogs |
-| Export/import v2 | **Implemented** — v2 files exported; v1 and v2 both import, with migration tests |
-| Offline/stats toggles | **Declared only** — preferences are stored; the features ship in later phases |
+| Export/import v3 | **Implemented** — v3 adds highlights and sessions; v1 and v2 still import, with migration tests |
+| Offline mode | **Implemented** — opt-in service worker, bundled-book caching, update notice, clear-offline action |
 | Reader display regressions | **Implemented** — theme tokens and fenced-code wrapper fixed; smoke guards TOC and chapter navigation |
 | Real cover images | **Partial** — strict Open Library matching; one match in the committed snapshot, generated covers fill the rest |
 | Cover fallback chain | **Implemented** — real image → generated art → static default SVG; verified on image error, 1×1 responses, empty titles and opt-out |
+| Source-provided cover metadata | **Implemented** — descriptions/years/pages/ISBN only when Open Library supplies them, with source link; never invented |
+| SEO and feed | **Implemented** — per-book OG images, JSON-LD, canonical URLs, sitemap, robots and Atom feed |
+| Reading stats | **Implemented** — opt-in sessions, weekly minutes, streaks, heatmap, goal and delete action |
+| Highlights and notes | **Implemented** — selection highlights with relocation, private notes, jump-to-chapter and Markdown export |
+| Optional gist sync | **Implemented** — opt-in, off by default; only book ids/statuses/timestamps are uploaded to a secret gist; token encrypted locally and excluded from exports |
 | Recently added shelf | **Implemented** — real sync history; honest empty state when a sync adds nothing |
 | Cloudflare Pages deploy | **Partial** — secrets and steps are wired, but the deploy fails with auth code 10000 until the token also has `User → User Details:Read` and `User → Memberships:Read` |
-| PDF text layer and annotations | **Not implemented** — canvas rendering only; page navigation works |
-| Accounts, cloud sync, runtime scraping | **Not implemented by design** — no backend and no site access bypass |
-| Descriptions, ratings, popularity | **Not implemented** — the source catalog does not provide them. Real covers come from Open Library; generated covers are decorative typography, never fake book art |
+| Accounts, cloud sync, runtime scraping | **Not implemented by design** — no backend and no site access bypass; the optional gist sync is user-initiated and off by default |
 
 ## Security and privacy
 
 - No backend, REST API, database server, authentication or analytics.
 - Search queries and reading positions never leave the browser.
 - With cover images enabled (the default), the browser requests matched images from `covers.openlibrary.org` — a third party. Turn this off in Settings to use generated covers only; no external image request is then made. Cover images are courtesy of [Open Library](https://openlibrary.org/).
+- Offline mode is off by default. When enabled, the service worker caches only same-origin static pages and the three allowlisted bundled books; it never caches catalog JSON or external resources.
+- Optional gist sync is off by default and user-initiated. You must preview the upload before the first sync; only book ids, statuses and timestamps are sent. The GitHub token is encrypted with AES-GCM using a passphrase you supply, stored only in IndexedDB, and excluded from exports. There is no password recovery.
 - `GITHUB_TOKEN` and Cloudflare credentials exist only inside the Actions runner; nothing token-like ships to `out/`.
 - Synchronization touches only `public/data/` and allowlisted `public/content/`; IndexedDB user data is never modified.
 - Bundled HTML is sanitized with DOMPurify; external links use `rel="noopener noreferrer"`.
@@ -236,12 +241,13 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 - Phase 0 verification: fenced code renders inside `<pre>`, duplicate heading ids stay unique, and active TOC contrast measured 18.88:1 with app theme light and reader theme dark.
 - Phase 1 verification: browser-language default resolved to Vietnamese, "All languages" wrote `lang=all`, search wrote `q=go`, browser back cleared it; switching to Vietnamese updated `document.documentElement.lang` and the navigation labels.
 - Phase 2 verification: six paths validate against real catalog ids; 149 works grouped into editions; a compressed share hash round-tripped through `/shared` with an import action; link health seeded with 5 checked URLs; 30/30 smoke checks cover the new routes and feed.
+- Phase 3/4 verification: 59 unit tests cover highlight anchors, reading time, stats, PDF rectangles, gist merge and token encryption; build emits 4,735 OG images plus sitemap/robots in 935 ms; 35/35 smoke checks cover `/stats`, manifest, sitemap, robots and the service worker. Route JS after lazy-loading the highlight layer: home 902.0 KB, books 925.5 KB, reader 1,232.2 KB (before Phases 3–4: 895.2 / 918.7 / 1,225.8 KB).
 
 ## Roadmap
 
-- Run the sync workflow once on the current head to publish the cover dataset and Phase 0–2 changes to GitHub Pages.
+- Run the sync workflow once on the current head to publish the Phase 0–4 changes to GitHub Pages.
 - Grant the missing Cloudflare token permissions and rerun the workflow with `force=true`.
-- PDF text layer and annotation rendering.
+- Expand the optional sync to conflict resolution chosen explicitly per book.
 - Expand the reading allowlist with more explicitly licensed source-linked books.
 - Optional custom domain and pagination/virtualization tuning for slower devices.
 

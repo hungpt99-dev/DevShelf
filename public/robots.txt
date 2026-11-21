@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://hungpt99-dev.github.io/DevShelf/sitemap.xml

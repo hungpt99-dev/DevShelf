@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { DEFAULT_PREFERENCES, type Preferences } from "@/lib/db/db";
 import { getPreferences, setPreference } from "@/lib/db/operations";
 
@@ -31,6 +31,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const [preferences, setPreferences] = useState<Preferences>(DEFAULT_PREFERENCES);
   const [customized, setCustomized] = useState(false);
   const [ready, setReady] = useState(false);
+  const touched = useRef(false);
 
   useEffect(() => {
     let active = true;
@@ -41,7 +42,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     } catch { /* private browsing */ }
     getPreferences().then((value) => {
       if (!active) return;
-      setPreferences(value);
+      if (!touched.current) setPreferences(value);
       setReady(true);
     });
     return () => { active = false; cleanup(); };
@@ -58,6 +59,7 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   }, [effective.theme, effective.locale]);
 
   const update = useCallback(<K extends keyof Preferences>(key: K, value: Preferences[K]) => {
+    touched.current = true;
     setPreferences((current) => ({ ...current, [key]: value }));
     setCustomized(true);
     try { window.localStorage.setItem("devshelf-customized", "1"); } catch { /* private browsing */ }

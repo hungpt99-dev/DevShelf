@@ -66,8 +66,8 @@ const ReadableSchema = z.object({
   assetBase: z.string().nullable(), downloadedAt: z.iso.datetime(),
 });
 
-function readJson(name: string): unknown {
-  return JSON.parse(readFileSync(join(DATA, name), "utf8"));
+function readJson(name: string, fallback: unknown = {}): unknown {
+  try { return JSON.parse(readFileSync(join(DATA, name), "utf8")); } catch { return fallback; }
 }
 
 function main(): void {
@@ -79,6 +79,11 @@ function main(): void {
   const languages = z.array(z.object({ code: z.string(), name: z.string(), count: z.number() })).safeParse(readJson("languages.json"));
   const history = z.array(HistorySchema).safeParse(readJson("sync-history.json"));
   const covers = z.record(z.string(), z.url()).safeParse(readJson("covers.json"));
+  const coverMetadata = z.record(z.string(), z.object({
+    description: z.string().optional(), firstPublishYear: z.number().int().positive().optional(),
+    isbn: z.string().optional(), pageCount: z.number().int().positive().optional(),
+    sources: z.record(z.string(), z.string().url()),
+  })).safeParse(readJson("cover-metadata.json", {}));
   const linkHealth = z.record(z.string(), z.object({
     status: z.enum(["ok", "redirected", "broken", "unknown"]),
     httpStatus: z.number().nullable(), checkedAt: z.iso.datetime(), consecutiveFailures: z.number(),
@@ -94,14 +99,14 @@ function main(): void {
   });
   const paths = pathFiles.map((file) => ({ file, parsed: PathSchema.safeParse(JSON.parse(readFileSync(join(pathDir, file), "utf8"))) }));
 
-  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history, covers, linkHealth })) {
+  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history, covers, coverMetadata, linkHealth })) {
     if (!result.success) errors.push(`${name}: ${result.error.issues.slice(0, 3).map((issue) => issue.message).join("; ")}`);
   }
   if (errors.length) {
     console.error("FAIL\n" + errors.join("\n"));
     process.exit(1);
   }
-  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success || !covers.success || !linkHealth.success) {
+  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success || !covers.success || !coverMetadata.success || !linkHealth.success) {
     process.exit(1); // Narrowing for TypeScript after schema errors.
   }
 
@@ -113,6 +118,9 @@ function main(): void {
     ids.add(book.id);
     if (book.description !== null) errors.push(`${book.id}: description must be null`);
     if (book.license && !/^(CC|GFDL|GNU|MIT|Public Domain)/i.test(book.license)) errors.push(`${book.id}: suspicious license "${book.license}"`);
+  }
+  if (coverMetadata.success) for (const id of Object.keys(coverMetadata.data)) {
+    if (!ids.has(id)) errors.push(`cover metadata id ${id} is not in the catalog`);
   }
   for (const [id, url] of Object.entries(covers.data)) {
     if (!ids.has(id)) errors.push(`cover entry references unknown book ${id}`);

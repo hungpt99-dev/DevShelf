@@ -3,6 +3,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Book } from "../src/types/book";
 import { titlesMatch } from "../src/lib/cover-text";
+import { extractCoverMetadata, type CoverMetadata } from "./lib/cover-metadata";
 import { planCoverLookups, type CoverMissCache } from "./lib/cover-cache";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -10,6 +11,7 @@ const DATA = join(ROOT, "public", "data");
 const CACHE_DIR = join(ROOT, "scripts", "cache");
 const MISSES_FILE = join(CACHE_DIR, "cover-misses.json");
 const COVERS_FILE = join(DATA, "covers.json");
+const METADATA_FILE = join(DATA, "cover-metadata.json");
 const USER_AGENT = "DevShelf/1.0 (+https://github.com/hungpt99-dev/DevShelf)";
 const TIMEOUT_MS = 10_000;
 const MAX_ATTEMPTS = 3;
@@ -111,11 +113,11 @@ function coverUrl(coverId: number): string {
   return `https://covers.openlibrary.org/b/id/${coverId}-M.jpg?default=false`;
 }
 
-async function findCover(book: Book): Promise<number | null> {
+async function findCover(book: Book): Promise<{ id: number; doc: Record<string, unknown> } | null> {
   const params = new URLSearchParams({
     title: book.title,
     limit: "5",
-    fields: "title,author_name,cover_i",
+    fields: "title,author_name,cover_i,first_publish_year,isbn,number_of_pages_median,description",
   });
   if (book.authors?.[0]) params.set("author", book.authors[0]);
   const payload = await requestJson(`https://openlibrary.org/search.json?${params.toString()}`) as {
@@ -131,7 +133,7 @@ async function findCover(book: Book): Promise<number | null> {
     const authors = Array.isArray(candidate.author_name)
       ? candidate.author_name.filter((name): name is string => typeof name === "string")
       : [];
-    if (titlesMatch(book.title, title, book.authors ?? [], authors)) return id;
+    if (titlesMatch(book.title, title, book.authors ?? [], authors)) return { id, doc: candidate };
   }
   return null;
 }
@@ -143,6 +145,7 @@ async function main(): Promise<void> {
   const byId = new Map(books.map((book) => [book.id, book]));
 
   const covers = readJson<Record<string, string>>(COVERS_FILE, {});
+  const metadata = readJson<Record<string, CoverMetadata>>(METADATA_FILE, {});
   const misses = readJson<CoverMissCache>(MISSES_FILE, {});
   const initialCovers = JSON.stringify(covers);
   const initialMisses = JSON.stringify(misses);
@@ -157,6 +160,7 @@ async function main(): Promise<void> {
   let processed = 0;
   const checkpoint = () => {
     writeJsonAtomic(COVERS_FILE, sortedEntries(covers));
+    writeJsonAtomic(METADATA_FILE, Object.fromEntries(Object.entries(metadata).sort(([a], [b]) => a.localeCompare(b))));
     writeJsonAtomic(MISSES_FILE, Object.fromEntries(Object.entries(misses).sort(([a], [b]) => a.localeCompare(b))));
   };
 
@@ -165,9 +169,11 @@ async function main(): Promise<void> {
     const book = byId.get(id);
     if (!book) continue;
     try {
-      const coverId = await findCover(book);
-      if (coverId !== null) {
-        covers[book.id] = coverUrl(coverId);
+      const match = await findCover(book);
+      if (match !== null) {
+        covers[book.id] = coverUrl(match.id);
+        const enriched = extractCoverMetadata(match.doc, `https://openlibrary.org/search.json?title=${encodeURIComponent(book.title)}`);
+        if (enriched) metadata[book.id] = enriched;
         delete misses[book.id];
         added += 1;
       } else {
@@ -186,7 +192,7 @@ async function main(): Promise<void> {
   checkpoint();
 
   const changed = JSON.stringify(covers) !== initialCovers || JSON.stringify(misses) !== initialMisses;
-  console.log(`Covers: +${added} found, ${missed} missed, ${pending.length - processed} skipped; ${Object.keys(covers).length} total`);
+  console.log(`Covers: +${added} found, ${missed} missed, ${pending.length - processed} skipped; ${Object.keys(covers).length} total; ${Object.keys(metadata).length} enriched`);
   console.log(`CHANGED=${changed ? "true" : "false"}`);
 }
 

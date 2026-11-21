@@ -3,6 +3,7 @@ import {
   DEFAULT_PREFERENCES, getDb,
   type BookmarkRecord, type ListStatus, type LocalBook, type PreferenceRecord,
   type Preferences, type ProgressRecord, type ReadingListRecord, type ShelfRecord,
+  type HighlightRecord, type SessionRecord,
 } from "./db";
 import { normalizeExport } from "./export-format";
 import { upgradeReadingListV1, type V2ListEntry } from "../reading-list-v2";
@@ -43,6 +44,25 @@ export async function getReadingList(): Promise<{ record: ReadingListRecord; boo
 
 export async function getListEntry(bookId: string): Promise<ListStatus | null> {
   return safe(async () => (await getDb()?.readingList.get(bookId))?.status ?? null, null);
+}
+
+export async function applySyncEntry(bookId: string, status: ListStatus, updatedAt: string): Promise<void> {
+  await safe(async () => {
+    const db = getDb();
+    if (!db) return;
+    const existing = await db.readingList.get(bookId);
+    await db.readingList.put({
+      bookId,
+      status,
+      addedAt: existing?.addedAt ?? updatedAt,
+      shelfId: existing?.shelfId ?? null,
+      tags: existing?.tags ?? [],
+      notes: existing?.notes ?? "",
+      rating: existing?.rating ?? 0,
+      startedAt: existing?.startedAt ?? null,
+      finishedAt: status === "completed" ? (existing?.finishedAt ?? updatedAt) : null,
+    } satisfies ReadingListRecord);
+  }, undefined);
 }
 
 export async function setBookStatus(status: ListStatus, book: Book): Promise<void> {
@@ -174,6 +194,52 @@ export async function updateListEntry(bookId: string, patch: Partial<V2ListEntry
   }, undefined);
 }
 
+export async function addHighlight(anchor: HighlightRecord): Promise<void> {
+  await safe(async () => { await getDb()?.highlights.put(anchor); }, undefined);
+}
+
+export async function getHighlights(bookId?: string): Promise<HighlightRecord[]> {
+  return safe(async () => {
+    const db = getDb();
+    if (!db) return [];
+    return bookId
+      ? await db.highlights.where("bookId").equals(bookId).toArray()
+      : await db.highlights.toArray();
+  }, []);
+}
+
+export async function updateHighlight(id: string, patch: Partial<HighlightRecord>): Promise<void> {
+  await safe(async () => {
+    const db = getDb();
+    const existing = await db?.highlights.get(id);
+    if (db && existing) await db.highlights.put({ ...existing, ...patch, id });
+  }, undefined);
+}
+
+export async function removeHighlight(id: string): Promise<void> {
+  await safe(async () => { await getDb()?.highlights.delete(id); }, undefined);
+}
+
+export async function recordSession(session: SessionRecord): Promise<void> {
+  await safe(async () => { await getDb()?.sessions.put(session); }, undefined);
+}
+
+export async function getSessions(): Promise<SessionRecord[]> {
+  return safe(async () => (await getDb()?.sessions.toArray()) ?? [], []);
+}
+
+export async function deleteStats(): Promise<void> {
+  await safe(async () => { await getDb()?.sessions.clear(); }, undefined);
+}
+
+export async function getPreferenceValue<T>(key: string): Promise<T | null> {
+  return safe(async () => ((await getDb()?.preferences.get(key))?.value as T) ?? null, null);
+}
+
+export async function setPreferenceValue(key: string, value: unknown): Promise<void> {
+  await safe(async () => { await getDb()?.preferences.put({ key, value }); }, undefined);
+}
+
 export async function getPreferences(): Promise<Preferences> {
   return safe(async () => {
     const db = getDb();
@@ -193,17 +259,17 @@ export async function setPreference<K extends keyof Preferences>(key: K, value: 
 export async function exportData(): Promise<string> {
   const db = getDb();
   const data = {
-    version: 2,
-    schemaVersion: 2,
+    version: 3,
+    schemaVersion: 3,
     exportedAt: new Date().toISOString(),
     books: db ? await db.books.toArray() : [],
     readingProgress: db ? await db.readingProgress.toArray() : [],
     readingList: db ? await db.readingList.toArray() : [],
     bookmarks: db ? await db.bookmarks.toArray() : [],
-    preferences: db ? await db.preferences.toArray() : [],
+    preferences: (db ? await db.preferences.toArray() : []).filter((item) => item.key !== "gistTokenEncrypted"),
     shelves: db ? await db.shelves.toArray() : [],
-    highlights: [],
-    sessions: [],
+    highlights: db ? await db.highlights.toArray() : [],
+    sessions: db ? await db.sessions.toArray() : [],
   };
   return JSON.stringify(data, null, 2);
 }
@@ -212,9 +278,9 @@ export async function importData(text: string): Promise<{ books: number; reading
   const parsed = normalizeExport(JSON.parse(text) as unknown);
   const db = getDb();
   if (!db) throw new Error("IndexedDB is unavailable in this browser");
-  await db.transaction("rw", [db.books, db.readingProgress, db.readingList, db.bookmarks, db.preferences, db.shelves], async () => {
+  await db.transaction("rw", [db.books, db.readingProgress, db.readingList, db.bookmarks, db.preferences, db.shelves, db.highlights, db.sessions], async () => {
     await Promise.all([
-      db.books.clear(), db.readingProgress.clear(), db.readingList.clear(), db.bookmarks.clear(), db.preferences.clear(), db.shelves.clear(),
+      db.books.clear(), db.readingProgress.clear(), db.readingList.clear(), db.bookmarks.clear(), db.preferences.clear(), db.shelves.clear(), db.highlights.clear(), db.sessions.clear(),
     ]);
     await db.books.bulkAdd(parsed.books);
     await db.readingProgress.bulkAdd(parsed.readingProgress);
@@ -222,6 +288,8 @@ export async function importData(text: string): Promise<{ books: number; reading
     await db.bookmarks.bulkAdd(parsed.bookmarks);
     await db.preferences.bulkAdd(parsed.preferences);
     await db.shelves.bulkAdd(parsed.shelves as ShelfRecord[]);
+    await db.highlights.bulkAdd(parsed.highlights as HighlightRecord[]);
+    await db.sessions.bulkAdd(parsed.sessions as SessionRecord[]);
   });
   return { books: parsed.books.length, readingList: parsed.readingList.length, bookmarks: parsed.bookmarks?.length ?? 0 };
 }
