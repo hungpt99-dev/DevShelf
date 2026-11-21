@@ -229,16 +229,17 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 
 ## Evidence
 
-- GitHub Actions: green sync/deploy run `44887877659` on an earlier head; run `44889512574` deployed the restyled site to GitHub Pages, then failed only at the optional Cloudflare step (token permissions, see Status). The current head `83620b7` has not had its own workflow run yet.
+- GitHub Actions: green sync/deploy run `44887877659` on an earlier head; run `44889512574` deployed the restyled site to GitHub Pages, then failed only at the optional Cloudflare step (token permissions, see Status). The current head `684e0a4` has not had its own workflow run yet.
 - Local static export verified with `npm run build` (exit 0, 9,477 pages) and `npm run smoke` (21/21, including reader TOC and chapter-navigation guards). The live demo serves the last deployed sync; the cover dataset is in the repo and will appear after the next workflow deploy.
 - Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 - Cover verification: a real Open Library image loads, aborted and 1×1 responses fall back to generated art, an empty title uses the static SVG, and turning the setting off produced zero Open Library requests.
 - Phase 0 verification: fenced code renders inside `<pre>`, duplicate heading ids stay unique, and active TOC contrast measured 18.88:1 with app theme light and reader theme dark.
 - Phase 1 verification: browser-language default resolved to Vietnamese, "All languages" wrote `lang=all`, search wrote `q=go`, browser back cleared it; switching to Vietnamese updated `document.documentElement.lang` and the navigation labels.
+- Phase 2 verification: six paths validate against real catalog ids; 149 works grouped into editions; a compressed share hash round-tripped through `/shared` with an import action; link health seeded with 5 checked URLs; 30/30 smoke checks cover the new routes and feed.
 
 ## Roadmap
 
-- Run the sync workflow once on the current head to publish the cover dataset and Phase 0/1 changes to GitHub Pages.
+- Run the sync workflow once on the current head to publish the cover dataset and Phase 0–2 changes to GitHub Pages.
 - Grant the missing Cloudflare token permissions and rerun the workflow with `force=true`.
 - PDF text layer and annotation rendering.
 - Expand the reading allowlist with more explicitly licensed source-linked books.

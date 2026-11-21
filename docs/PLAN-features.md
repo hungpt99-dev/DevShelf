@@ -1,6 +1,6 @@
 # DevShelf feature plan
 
-Status: Phase 0 recon complete. No feature code from phases 1–4 has been written. Awaiting approval of this document.
+Status: Phases 0–2 complete. Phase 2 awaits review before Phase 3.
 
 ## Recon snapshot
 
