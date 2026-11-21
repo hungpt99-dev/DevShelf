@@ -1,6 +1,6 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-21T16:41:29.546Z
+- Generated: 2026-11-21T17:35:25.214Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
 - Upstream commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
 - Previous commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
@@ -9,14 +9,21 @@
 ## Changes since last sync
 
 - Added: 0
-- Updated: 0
+- Updated: 149
 - Removed: 0
 
 ### Added (first entries)
 - none
 
 ### Updated (first entries)
-- none
+- .NET Framework Notes for Professionals ()
+- 《The Swift Programming Language》中文版 ()
+- 2 ()
+- ৫২ টি প্রোগ্রামিং সমস্যা ()
+- Android アプリのセキュア設計・セキュアコーディングガイド ()
+- Angular Docs ()
+- Angular Tutorial ()
+- AngularJS最佳实践和风格指南 ()
 
 ### Removed (first entries)
 - none
@@ -92,6 +99,9 @@
 
 | Source URL | Result | Book |
 | --- | --- | --- |
+| https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md | ok (188 KiB) | b-c085be43677c |
+| http://autotelicum.github.io/Smooth-CoffeeScript/SmoothCoffeeScript.html | ok (613 KiB) | b-1e82a929fe0f |
+| https://www.openmymind.net/assets/go/go.pdf | ok (242 KiB) | b-9645f99c21e5 |
 
 ## Method
 
