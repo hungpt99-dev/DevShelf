@@ -2,113 +2,102 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Check, Github, LibraryBig, Menu, Moon, Search, Settings, Sun, X } from "lucide-react";
+import { Check, Github, Library, Menu, Moon, Search, Sun, X } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
-  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { usePreferences } from "@/providers/preferences-provider";
 import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/books", label: "Explore", icon: LibraryBig },
-  { href: "/reading-list", label: "Reading list", icon: BookOpen },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/books", label: "Library" },
+  { href: "/reading-list", label: "Reading list" },
+  { href: "/settings", label: "Settings" },
 ];
-
-const themes = [
-  { value: "light", label: "Light", icon: Sun },
-  { value: "sepia", label: "Sepia", icon: BookOpen },
-  { value: "dark", label: "Dark", icon: Moon },
-] as const;
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { setSearchOpen } = useUIStore();
-  const { preferences, update } = usePreferences();
+  const { effective, update } = usePreferences();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const theme = effective.theme;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/70 bg-background/92 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-40 border-b border-line bg-background/80 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2.5" aria-label="DevShelf home">
-          <span className="flex size-8 items-center justify-center rounded-md bg-primary text-primary-foreground">
-            <BookOpen className="size-4.5" aria-hidden />
+          <span className="flex size-8 items-center justify-center rounded-[10px] bg-lime text-on-lime">
+            <Library className="size-[18px]" aria-hidden />
           </span>
-          <span className="text-[17px] font-semibold tracking-tight">DevShelf</span>
+          <span className="text-[17px] font-medium tracking-tight">DevShelf</span>
         </Link>
 
-        <nav className="ml-6 hidden items-center gap-1 md:flex" aria-label="Main navigation">
-          {links.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "rounded-md px-3 py-2 text-sm transition-colors hover:bg-secondary",
-                pathname === link.href || pathname.startsWith(`${link.href}/`)
-                  ? "font-medium text-foreground"
-                  : "text-muted-foreground",
-              )}
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav className="ml-4 hidden items-center gap-1 rounded-full border border-line bg-card p-1 md:flex" aria-label="Main navigation">
+          {links.map((link) => {
+            const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={active ? "page" : undefined}
+                className={cn(
+                  "rounded-full px-3.5 py-1.5 text-[13px] hover:border hover:border-lime",
+                  active ? "bg-background text-ink" : "text-muted",
+                )}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="hidden h-9 w-56 justify-start gap-2 text-muted-foreground sm:flex"
+          <button
+            type="button"
             onClick={() => setSearchOpen(true)}
+            className="hidden h-9 items-center gap-2 rounded-[12px] border border-line bg-card px-3 text-[13px] text-muted hover:border-lime sm:flex"
             aria-label="Search books"
           >
             <Search className="size-4" aria-hidden />
-            <span>Search books...</span>
-            <kbd className="ml-auto rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[10px]">⌘K</kbd>
-          </Button>
-          <Button variant="ghost" size="icon" className="size-9 sm:hidden" onClick={() => setSearchOpen(true)} aria-label="Search books">
-            <Search className="size-4" />
-          </Button>
+            <span>Search</span>
+            <kbd className="rounded-md border border-line px-1.5 py-0.5 font-mono text-[10px] text-muted">⌘K</kbd>
+          </button>
+          <button type="button" onClick={() => setSearchOpen(true)} className="flex size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime sm:hidden" aria-label="Search books">
+            <Search className="size-4" aria-hidden />
+          </button>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="size-9" aria-label="Change theme">
-                {preferences.theme === "dark" ? <Moon className="size-4" /> : preferences.theme === "sepia" ? <BookOpen className="size-4" /> : <Sun className="size-4" />}
-              </Button>
+              <button type="button" className="flex size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime" aria-label="Change theme">
+                {theme === "dark" ? <Moon className="size-4" aria-hidden /> : <Sun className="size-4" aria-hidden />}
+              </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
+            <DropdownMenuContent align="end" className="bg-card">
               <DropdownMenuLabel>Appearance</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {themes.map((theme) => (
-                <DropdownMenuItem key={theme.value} onClick={() => update("theme", theme.value)}>
-                  <theme.icon className="size-4" aria-hidden />
-                  {theme.label}
-                  {preferences.theme === theme.value && <Check className="ml-auto size-4" aria-hidden />}
+              {(["dark", "light", "sepia"] as const).map((value) => (
+                <DropdownMenuItem key={value} onClick={() => update("theme", value)} className="capitalize">
+                  {value}
+                  {theme === value && <Check className="ml-auto size-4 text-lime" aria-hidden />}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button variant="ghost" size="icon" className="size-9 hidden sm:inline-flex" asChild aria-label="Data source on GitHub">
-            <a href="https://github.com/EbookFoundation/free-programming-books" target="_blank" rel="noopener noreferrer">
-              <Github className="size-4" />
-            </a>
-          </Button>
-
-          <Button variant="ghost" size="icon" className="size-9 md:hidden" onClick={() => setMobileOpen((open) => !open)} aria-label="Toggle navigation">
-            {mobileOpen ? <X className="size-4" /> : <Menu className="size-4" />}
-          </Button>
+          <a href="https://github.com/EbookFoundation/free-programming-books" target="_blank" rel="noopener noreferrer" className="hidden size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime sm:flex" aria-label="Source repository on GitHub">
+            <Github className="size-4" aria-hidden />
+          </a>
+          <button type="button" onClick={() => setMobileOpen((open) => !open)} className="flex size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime md:hidden" aria-label="Toggle navigation">
+            {mobileOpen ? <X className="size-4" aria-hidden /> : <Menu className="size-4" aria-hidden />}
+          </button>
         </div>
       </div>
-
       {mobileOpen && (
-        <nav className="border-t border-border bg-background px-4 py-3 md:hidden" aria-label="Mobile navigation">
+        <nav className="border-t border-line bg-background px-4 py-3 md:hidden" aria-label="Mobile navigation">
           {links.map((link) => (
-            <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)} className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm hover:bg-secondary">
-              <link.icon className="size-4" aria-hidden />{link.label}
+            <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-[12px] px-3 py-2.5 text-sm text-muted hover:text-ink">
+              {link.label}
             </Link>
           ))}
         </nav>

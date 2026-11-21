@@ -76,24 +76,24 @@ export default function PdfReader({
   }, []);
 
   if (error?.url === url) {
-    return <div role="alert" className="mx-auto max-w-xl rounded-lg border border-destructive/40 p-6 text-center text-sm text-destructive">PDF error: {error.message}</div>;
+    return <div role="alert" className="mx-auto max-w-xl rounded-[16px] border border-destructive/50 p-6 text-center text-[13px] text-destructive">PDF error: {error.message}</div>;
   }
 
   return (
-    <div ref={containerRef} className="flex min-h-[70vh] flex-col items-center gap-4 bg-[var(--reader-code-bg)] py-6">
-      {!pdf && <div className="flex items-center gap-2 py-20 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" aria-hidden /> Loading PDF...</div>}
+    <div ref={containerRef} className="flex min-h-[70vh] flex-col items-center gap-4 py-6">
+      {!pdf && <div className="flex items-center gap-2 py-20 text-[13px] text-muted"><Loader2 className="size-4 animate-spin" aria-hidden /> Loading PDF...</div>}
       {pdf && (
         <>
-          <canvas ref={canvasRef} className="max-w-full shadow-sm" aria-label={`PDF page ${page}`} />
-          <div className="sticky bottom-4 flex flex-wrap items-center justify-center gap-2 rounded-lg border border-border bg-background/95 p-2 backdrop-blur">
-            <Button size="icon" variant="ghost" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={page <= 1} aria-label="Previous page">←</Button>
-            <span className="min-w-28 text-center text-sm tabular-nums">Page {page} / {pdf.numPages}</span>
-            <Button size="icon" variant="ghost" onClick={() => setPage((value) => Math.min(pdf.numPages, value + 1))} disabled={page >= pdf.numPages} aria-label="Next page">→</Button>
-            <span className="mx-1 h-5 w-px bg-border" aria-hidden />
-            <Button size="icon" variant="ghost" onClick={() => setZoom((value) => Math.max(0.6, +(value - 0.15).toFixed(2)))} aria-label="Zoom out"><Minus className="size-4" /></Button>
-            <span className="w-12 text-center text-xs tabular-nums">{Math.round(zoom * 100)}%</span>
-            <Button size="icon" variant="ghost" onClick={() => setZoom((value) => Math.min(2.2, +(value + 0.15).toFixed(2)))} aria-label="Zoom in"><Plus className="size-4" /></Button>
-            <Button size="icon" variant="ghost" onClick={fullscreen} aria-label="Fullscreen PDF"><Maximize2 className="size-4" /></Button>
+          <canvas ref={canvasRef} className="max-w-full rounded-[12px] border border-line" aria-label={`PDF page ${page}`} />
+          <div className="sticky bottom-4 flex flex-wrap items-center justify-center gap-2 rounded-[12px] border border-line bg-card/95 p-2 backdrop-blur-xl">
+            <Button size="icon" variant="ghost" className="hover:border hover:border-lime" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={page <= 1} aria-label="Previous page">←</Button>
+            <span className="min-w-28 text-center text-[12px] tabular-nums">Page {page} / {pdf.numPages}</span>
+            <Button size="icon" variant="ghost" className="hover:border hover:border-lime" onClick={() => setPage((value) => Math.min(pdf.numPages, value + 1))} disabled={page >= pdf.numPages} aria-label="Next page">→</Button>
+            <span className="mx-1 h-5 w-px bg-line" aria-hidden />
+            <Button size="icon" variant="ghost" className="hover:border hover:border-lime" onClick={() => setZoom((value) => Math.max(0.6, +(value - 0.15).toFixed(2)))} aria-label="Zoom out"><Minus className="size-4" /></Button>
+            <span className="w-12 text-center font-mono text-[10px] tabular-nums">{Math.round(zoom * 100)}%</span>
+            <Button size="icon" variant="ghost" className="hover:border hover:border-lime" onClick={() => setZoom((value) => Math.min(2.2, +(value + 0.15).toFixed(2)))} aria-label="Zoom in"><Plus className="size-4" /></Button>
+            <Button size="icon" variant="ghost" className="hover:border hover:border-lime" onClick={fullscreen} aria-label="Fullscreen PDF"><Maximize2 className="size-4" /></Button>
           </div>
         </>
       )}

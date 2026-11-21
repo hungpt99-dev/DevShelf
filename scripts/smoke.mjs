@@ -15,8 +15,8 @@ async function check(name, path, predicate) {
   checks.push({ name, path, status: response.status, ok, bytes: body.length });
 }
 
-await check("homepage", "/", (body) => ["Your library for learning to code.", "Featured categories", "Last synchronized", "Source repository"].every((needle) => body.includes(needle)));
-await check("catalog", "/books", (body) => body.includes("Explore the library") && body.includes("All languages"));
+await check("homepage", "/", (body) => ["Read the best programming books", "Recently added", "Ready to read here", "synced"].every((needle) => body.includes(needle)));
+await check("catalog", "/books", (body) => body.includes("The library") && body.includes("Search by title or author"));
 await check("reading list", "/reading-list", (body) => body.includes("Reading list"));
 await check("settings", "/settings", (body) => body.includes("Appearance") && body.includes("Export JSON"));
 await check("book index", "/data/books.json", (body) => JSON.parse(body).length > 4000);
