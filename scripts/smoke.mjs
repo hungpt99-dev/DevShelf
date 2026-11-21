@@ -17,8 +17,10 @@ async function check(name, path, predicate) {
 
 await check("homepage", "/", (body) => ["Read the best programming books", "Recently added", "Ready to read here", "synced"].every((needle) => body.includes(needle)));
 await check("catalog", "/books", (body) => body.includes("The library") && body.includes("Search by title or author"));
+await check("catalog filtered url", "/books?lang=English&sort=new", (body) => body.includes("The library"));
 await check("reading list", "/reading-list", (body) => body.includes("Reading list"));
 await check("settings", "/settings", (body) => body.includes("Appearance") && body.includes("Export JSON"));
+await check("settings language switcher", "/settings", (body) => body.includes("Tiếng Việt") && body.includes("Offline reading"));
 await check("book index", "/data/books.json", (body) => JSON.parse(body).length > 4000);
 await check("categories index", "/data/categories.json", (body) => JSON.parse(body).length > 100);
 await check("languages index", "/data/languages.json", (body) => JSON.parse(body).length > 20);
