@@ -1,7 +1,8 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { z } from "zod";
+import { validatePath } from "../src/lib/paths";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const DATA = join(ROOT, "public", "data");
@@ -29,6 +30,10 @@ const BookSchema = z.object({
   firstSeenAt: z.iso.datetime(),
   lastSeenAt: z.iso.datetime(),
   reading: z.object({ available: z.boolean(), type: z.enum(["markdown", "html", "pdf", "external"]).nullable() }),
+  editions: z.array(z.object({
+    id: z.string(), title: z.string(), authors: z.array(z.string()), language: z.string(),
+    format: z.string(), readable: z.boolean(), url: z.string().optional(),
+  })).optional(),
 });
 
 const MetadataSchema = z.object({
@@ -74,15 +79,29 @@ function main(): void {
   const languages = z.array(z.object({ code: z.string(), name: z.string(), count: z.number() })).safeParse(readJson("languages.json"));
   const history = z.array(HistorySchema).safeParse(readJson("sync-history.json"));
   const covers = z.record(z.string(), z.url()).safeParse(readJson("covers.json"));
+  const linkHealth = z.record(z.string(), z.object({
+    status: z.enum(["ok", "redirected", "broken", "unknown"]),
+    httpStatus: z.number().nullable(), checkedAt: z.iso.datetime(), consecutiveFailures: z.number(),
+  })).safeParse(readJson("link-health.json"));
+  const pathDir = join(ROOT, "data", "paths");
+  const pathFiles = existsSync(pathDir)
+    ? readdirSync(pathDir).filter((name) => name.endsWith(".json") && name !== "schema.json").sort()
+    : [];
+  const PathSchema = z.object({
+    id: z.string().regex(/^[a-z0-9-]+$/), title: z.string().min(1), description: z.string().min(1),
+    level: z.enum(["beginner", "intermediate", "advanced"]), estimatedHours: z.number().positive().optional(),
+    books: z.array(z.object({ id: z.string(), why: z.string().min(1) })).min(1),
+  });
+  const paths = pathFiles.map((file) => ({ file, parsed: PathSchema.safeParse(JSON.parse(readFileSync(join(pathDir, file), "utf8"))) }));
 
-  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history, covers })) {
+  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history, covers, linkHealth })) {
     if (!result.success) errors.push(`${name}: ${result.error.issues.slice(0, 3).map((issue) => issue.message).join("; ")}`);
   }
   if (errors.length) {
     console.error("FAIL\n" + errors.join("\n"));
     process.exit(1);
   }
-  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success || !covers.success) {
+  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success || !covers.success || !linkHealth.success) {
     process.exit(1); // Narrowing for TypeScript after schema errors.
   }
 
@@ -128,6 +147,14 @@ function main(): void {
     for (const id of latest.added) if (!ids.has(id)) errors.push(`history added book ${id} is missing from books.json`);
   }
 
+  for (const { file, parsed } of paths) {
+    if (!parsed.success) {
+      errors.push(`paths/${file}: ${parsed.error.issues.slice(0, 2).map((issue) => issue.message).join("; ")}`);
+      continue;
+    }
+    for (const message of validatePath(parsed.data, [...ids])) errors.push(`paths/${file}: ${message}`);
+  }
+
   const categoryTotal = categories.data.reduce((sum, item) => sum + item.count, 0);
   if (categoryTotal < bookList.length) errors.push("category counts do not cover every book");
 
@@ -135,6 +162,6 @@ function main(): void {
     console.error(`FAIL (${errors.length})\n` + errors.slice(0, 20).join("\n"));
     process.exit(1);
   }
-  console.log(`PASS — ${bookList.length} books, ${categories.data.length} categories, ${languages.data.length} languages, ${readableList.length} readable books, ${history.data.length} sync-history entries, ${Object.keys(covers.data).length} cover images`);
+  console.log(`PASS — ${bookList.length} books, ${categories.data.length} categories, ${languages.data.length} languages, ${readableList.length} readable books, ${history.data.length} sync-history entries, ${Object.keys(covers.data).length} cover images, ${pathFiles.length} learning paths`);
 }
 main();

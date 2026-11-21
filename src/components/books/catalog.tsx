@@ -8,12 +8,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { fetchBooks, fetchLanguages, fetchMetadata } from "@/lib/client-data";
+import { fetchBooks, fetchLanguages, fetchLinkHealth, fetchMetadata } from "@/lib/client-data";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useI18n } from "@/lib/i18n";
 import { buildSearchIndex, searchBooks } from "@/lib/search";
 import { browserLanguageName, buildFilterSearch, defaultFilters, parseFilters, type FilterState } from "@/lib/url-filters";
 import type { Book, LanguageRecord, LibraryMetadata } from "@/types/book";
+import type { LinkHealth } from "../../../scripts/lib/link-health";
 
 const PAGE_SIZE = 20;
 const TRIGGER = "w-auto min-w-[140px] whitespace-nowrap";
@@ -26,6 +27,8 @@ export function Catalog() {
   const [books, setBooks] = useState<Book[] | null>(null);
   const [metadata, setMetadata] = useState<LibraryMetadata | null>(null);
   const [languageRecords, setLanguageRecords] = useState<LanguageRecord[]>([]);
+  const [linkHealth, setLinkHealth] = useState<Record<string, LinkHealth>>({});
+  const [hideUnavailable, setHideUnavailable] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const defaultLanguage = useMemo(
@@ -37,13 +40,14 @@ export function Catalog() {
 
   useEffect(() => {
     let active = true;
-    Promise.all([fetchBooks(), fetchMetadata(), fetchLanguages()])
-      .then(([data, meta, languages]) => {
+    Promise.all([fetchBooks(), fetchMetadata(), fetchLanguages(), fetchLinkHealth()])
+      .then(([data, meta, languages, health]) => {
         if (!active) return;
         buildSearchIndex(data);
         setBooks(data);
         setMetadata(meta);
         setLanguageRecords(languages);
+        setLinkHealth(health);
       })
       .catch((reason: unknown) => { if (active) setError(reason instanceof Error ? reason.message : "Could not load the catalog"); });
     return () => { active = false; };
@@ -85,6 +89,7 @@ export function Catalog() {
       if (filters.availability === "readable" && !book.reading.available) return false;
       if (filters.availability === "external" && book.reading.available) return false;
       if (filters.license && book.license !== filters.license) return false;
+      if (hideUnavailable && linkHealth[book.url]?.status === "broken") return false;
       return true;
     });
     return result.sort((a, b) =>
@@ -92,7 +97,7 @@ export function Catalog() {
         ? a.title.localeCompare(b.title)
         : b.firstSeenAt.localeCompare(a.firstSeenAt) || a.title.localeCompare(b.title),
     );
-  }, [books, debounced, filters.language, filters.category, filters.format, filters.availability, filters.license, filters.sort]);
+  }, [books, debounced, filters.language, filters.category, filters.format, filters.availability, filters.license, filters.sort, hideUnavailable, linkHealth]);
 
   const activeFilters = [
     filters.language && { label: filters.language, clear: () => setFilter("language", "") },
@@ -143,6 +148,10 @@ export function Catalog() {
             <SelectTrigger className={TRIGGER} aria-label={t("catalog.license")}><SelectValue placeholder={t("catalog.license")} /></SelectTrigger>
             <SelectContent><SelectItem value="__all__">{t("catalog.anyLicense")}</SelectItem>{licenses.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
           </Select>
+          <label className="inline-flex h-9 items-center gap-2 rounded-[12px] border border-line bg-card px-3 text-[12px] hover:border-lime">
+            <input type="checkbox" checked={hideUnavailable} onChange={(event) => setHideUnavailable(event.target.checked)} aria-label="Hide unavailable books" />
+            Hide unavailable
+          </label>
           <Select value={filters.sort} onValueChange={(value) => setFilter("sort", value as FilterState["sort"])}>
             <SelectTrigger className={TRIGGER} aria-label={t("catalog.sort")}><SelectValue placeholder={t("catalog.sort")} /></SelectTrigger>
             <SelectContent>

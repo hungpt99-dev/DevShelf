@@ -1,0 +1,32 @@
+{
+  "http://3monkeys.github.io/play.rules/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-21T16:41:49.973Z",
+    "consecutiveFailures": 0
+  },
+  "https://0xax.gitbooks.io/linux-insides/content/index.html": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-21T16:41:48.920Z",
+    "consecutiveFailures": 0
+  },
+  "https://10print.org": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-21T16:41:49.622Z",
+    "consecutiveFailures": 0
+  },
+  "https://4programmers.net/C_sharp": {
+    "status": "unknown",
+    "httpStatus": 403,
+    "checkedAt": "2026-11-21T16:41:50.231Z",
+    "consecutiveFailures": 1
+  },
+  "https://8th713.github.io/LearnAngularJS": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-21T16:41:50.728Z",
+    "consecutiveFailures": 0
+  }
+}

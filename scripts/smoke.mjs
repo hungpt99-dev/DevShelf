@@ -19,6 +19,12 @@ await check("homepage", "/", (body) => ["Read the best programming books", "Rece
 await check("catalog", "/books", (body) => body.includes("The library") && body.includes("Search by title or author"));
 await check("catalog filtered url", "/books?lang=English&sort=new", (body) => body.includes("The library"));
 await check("reading list", "/reading-list", (body) => body.includes("Reading list"));
+await check("learning paths", "/paths", (body) => body.includes("Learning paths") && body.includes("Learn Rust"));
+await check("path detail", "/paths/learn-rust", (body) => body.includes("The Rust Programming Language"));
+await check("new books", "/new", (body) => body.includes("New books"));
+await check("changelog", "/changelog", (body) => body.includes("Changelog"));
+await check("shared", "/shared", () => true);
+await check("feed", "/feed.xml", (body) => body.includes("<feed") && body.includes("DevShelf"));
 await check("settings", "/settings", (body) => body.includes("Appearance") && body.includes("Export JSON"));
 await check("settings language switcher", "/settings", (body) => body.includes("Tiếng Việt") && body.includes("Offline reading"));
 await check("book index", "/data/books.json", (body) => JSON.parse(body).length > 4000);
@@ -32,6 +38,10 @@ await check("covers index", "/data/covers.json", (body) => {
 });
 await check("default cover", "/images/default-cover.svg", (body) => body.includes("<svg") && body.includes("#c8f542"));
 await check("pdf worker", "/pdf/pdf.worker.min.mjs", (body) => body.length > 10000);
+await check("link health index", "/data/link-health.json", (body) => {
+  const health = JSON.parse(body);
+  return health && typeof health === "object";
+});
 
 for (const entry of readable) {
   const book = books.find((item) => item.id === entry.bookId);
