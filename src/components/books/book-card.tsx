@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { BookCover } from "@/components/book/BookCover";
+import { QuickActions } from "@/components/books/quick-actions";
 import { useCoverUrl } from "@/lib/use-covers";
 import { usePreferences } from "@/providers/preferences-provider";
 import type { Book } from "@/types/book";
@@ -39,6 +40,8 @@ export function BookCard({ book }: { book: Book }) {
         )}
         <span className="rounded-full border border-line px-2 py-0.5 font-mono text-[10px] text-muted">{formatLabel(book)}</span>
         <span className="rounded-full border border-line px-2 py-0.5 text-[10px] text-muted">{book.language}</span>
+        {(book.editions?.length ?? 0) > 1 && <span className="rounded-full border border-line px-2 py-0.5 font-mono text-[10px] text-muted">{book.editions!.length} editions</span>}
+        <span className="ml-auto"><QuickActions book={book} compact /></span>
       </div>
     </article>
   );

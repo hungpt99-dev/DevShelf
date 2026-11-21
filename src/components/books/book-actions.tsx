@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, ExternalLink, ListPlus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getListEntry, removeFromList, setBookStatus } from "@/lib/db/operations";
+import { QuickActions } from "@/components/books/quick-actions";
 import type { Book, ReadableRecord } from "@/types/book";
 
 export function BookActions({ book, resource }: { book: Book; resource: ReadableRecord | null }) {
@@ -47,6 +48,7 @@ export function BookActions({ book, resource }: { book: Book; resource: Readable
         <Button variant="outline" disabled={busy || status !== null} onClick={() => void apply("saved")} className="rounded-[12px] border-line-strong hover:border-lime">
           <ListPlus className="size-4" aria-hidden /> {status ? "On your shelf" : "Add to reading list"}
         </Button>
+        <QuickActions book={book} />
         <Button variant="outline" disabled={busy || status === "completed"} onClick={() => void apply("completed")} className="rounded-[12px] border-line-strong hover:border-lime">
           <Check className="size-4" aria-hidden /> {status === "completed" ? "Completed" : "Mark completed"}
         </Button>

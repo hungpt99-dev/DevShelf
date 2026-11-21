@@ -21,6 +21,19 @@ export interface ReadingListRecord {
   bookId: string;
   status: ListStatus;
   addedAt: string;
+  shelfId?: string | null;
+  tags?: string[];
+  notes?: string;
+  rating?: number;
+  startedAt?: string | null;
+  finishedAt?: string | null;
+}
+
+export interface ShelfRecord {
+  id: string;
+  name: string;
+  color: string;
+  createdAt: string;
 }
 
 export interface BookmarkRecord {
@@ -71,6 +84,7 @@ class DevShelfDatabase extends Dexie {
   readingList!: Table<ReadingListRecord, string>;
   bookmarks!: Table<BookmarkRecord, string>;
   preferences!: Table<PreferenceRecord, string>;
+  shelves!: Table<ShelfRecord, string>;
 
   constructor() {
     super("devshelf");
@@ -80,6 +94,25 @@ class DevShelfDatabase extends Dexie {
       readingList: "bookId,status,addedAt",
       bookmarks: "id,bookId,chapterId",
       preferences: "key",
+    });
+    this.version(2).stores({
+      books: "id,title",
+      readingProgress: "bookId,updatedAt",
+      readingList: "bookId,status,addedAt,shelfId",
+      bookmarks: "id,bookId,chapterId",
+      preferences: "key",
+      shelves: "id,name,createdAt",
+    }).upgrade(async (transaction) => {
+      const records = await transaction.table("readingList").toArray();
+      await transaction.table("readingList").bulkPut(records.map((record) => ({
+        ...record,
+        shelfId: record.shelfId ?? null,
+        tags: record.tags ?? [],
+        notes: record.notes ?? "",
+        rating: record.rating ?? 0,
+        startedAt: record.startedAt ?? null,
+        finishedAt: record.finishedAt ?? null,
+      })));
     });
   }
 }
