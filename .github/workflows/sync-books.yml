@@ -47,6 +47,7 @@ jobs:
         id: check
         run: |
           set -euo pipefail
+          mkdir -p .cache
           extra=""
           if [ "$FORCE" = "true" ]; then extra="--force"; fi
           npm run sync:check -- $extra | tee .cache/sync-check.log
