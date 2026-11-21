@@ -12,7 +12,7 @@ function textOf(node: MdNode): string {
   return (node.children ?? []).map(textOf).join("");
 }
 
-function chaptersFromMarkdown(markdown: string): Chapter[] {
+export function chaptersFromMarkdown(markdown: string): Chapter[] {
   const tree = unified().use(remarkParse).parse(markdown) as MdNode;
   const slugger = new GithubSlugger();
   const chapters: Chapter[] = [];

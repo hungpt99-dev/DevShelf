@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
   <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/Tailwind-v4-38bdf8" alt="Tailwind CSS v4">
-  <img src="https://img.shields.io/badge/tests-16%20passing-brightgreen" alt="16 tests passing">
+  <img src="https://img.shields.io/badge/tests-19%20passing-brightgreen" alt="19 tests passing">
   <img src="https://img.shields.io/badge/static-export-orange" alt="Static export">
   <img src="https://img.shields.io/badge/data-CC%20BY%204.0-orange" alt="Data license CC BY 4.0">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
@@ -105,7 +105,7 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Books from source | 4,735 | `npm run validate:data` |
 | Categories / languages | 498 / 46 | `public/data/metadata.json` |
 | Bundled readable books | 3 | `public/data/readable.json` |
-| Unit tests | 16 passing | `npm test` |
+| Unit tests | 19 passing | `npm test` |
 | Static build | exit code 0; 9,477 static pages | `npm run build` (output in `out/`) |
 | HTTP smoke checks | 21/21 | `npm run smoke` against a local `out/` server |
 | Cover matches in snapshot | 1 | `Object.keys(require("./public/data/covers.json")).length` |
@@ -142,7 +142,7 @@ Network or parse failures stop before any file is written, so the last known goo
 | --- | --- |
 | **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Deployment](docs/DEPLOYMENT.md) |
 | **Trusting it** | [Data sources & attribution](docs/DATA_SOURCES.md) · [Sync report](scripts/reports/sync-report.md) · [MIT license](LICENSE) |
-| **Building on it** | [Architecture](ARCHITECTURE.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
+| **Building on it** | [Architecture](ARCHITECTURE.md) · [Feature plan](docs/PLAN-features.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
 | **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Cover fetcher](scripts/fetch-covers.ts) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
 
 ## Architecture
@@ -179,6 +179,7 @@ flowchart LR
 | External resources | **Implemented** — detail page links to the original source; never scraped |
 | Progress, bookmarks, preferences, export/import | **Implemented** — Dexie/IndexedDB, no account |
 | Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the last deployed head; current head awaits the next workflow run |
+| Reader display regressions | **Implemented** — theme tokens and fenced-code wrapper fixed; smoke guards TOC and chapter navigation |
 | Real cover images | **Partial** — strict Open Library matching; one match in the committed snapshot, generated covers fill the rest |
 | Cover fallback chain | **Implemented** — real image → generated art → static default SVG; verified on image error, 1×1 responses, empty titles and opt-out |
 | Recently added shelf | **Implemented** — real sync history; honest empty state when a sync adds nothing |
@@ -212,7 +213,7 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 ## Evidence
 
 - GitHub Actions: green sync/deploy run `44887877659` on an earlier head; run `44889512574` deployed the restyled site to GitHub Pages, then failed only at the optional Cloudflare step (token permissions, see Status). The current head `9de5f4c` has not had its own workflow run yet.
-- Local static export verified with `npm run build` (exit 0, 9,477 pages) and `npm run smoke` (21/21). The live demo serves the last deployed sync; the cover dataset is in the repo and will appear after the next workflow deploy.
+- Local static export verified with `npm run build` (exit 0, 9,477 pages) and `npm run smoke` (21/21, including reader TOC and chapter-navigation guards). The live demo serves the last deployed sync; the cover dataset is in the repo and will appear after the next workflow deploy.
 - Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 - Cover verification: a real Open Library image loads, aborted and 1×1 responses fall back to generated art, an empty title uses the static SVG, and turning the setting off produced zero Open Library requests.
 

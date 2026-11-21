@@ -140,6 +140,8 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-ink: var(--ink);
+  --color-reader-fg: var(--reader-fg);
   --color-line: var(--line);
   --color-line-strong: var(--line-strong);
   --color-lime: var(--lime);

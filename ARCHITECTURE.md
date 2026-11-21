@@ -1,5 +1,7 @@
 # DevShelf architecture
 
+The phased feature roadmap and migration plan live in [docs/PLAN-features.md](docs/PLAN-features.md). No phase-1+ feature code has been implemented yet.
+
 ## Runtime shape
 
 DevShelf is a static Next.js App Router application (`output: "export"`). Pages that depend on the catalog are statically generated at build time; the large searchable catalog is fetched once by the browser from `/data/books.json` and indexed in memory with Fuse.js. There is no server-side request handling at runtime.

@@ -25,7 +25,7 @@ export function CodeBlock({ children, language }: { children: ReactNode; languag
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
-      {children}
+      <pre>{children}</pre>
     </div>
   );
 }

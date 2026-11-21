@@ -186,7 +186,7 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
                 onClick={() => goToChapter(index)}
                 className={cn(
                   "block w-full border-l-2 py-1.5 pr-2 text-left text-[12px] leading-snug hover:text-lime-text",
-                  index === currentChapter ? "border-lime bg-card pl-2 text-ink" : "border-transparent pl-2 text-muted",
+                  index === currentChapter ? "border-lime bg-card pl-2 text-foreground" : "border-transparent pl-2 text-muted",
                   chapter.level >= 3 && "pl-4",
                   chapter.level >= 4 && "pl-6",
                 )}
@@ -228,8 +228,8 @@ export function ReaderShell({ book, resource }: { book: Book; resource: Readable
 
         {content && (
           <footer className="mx-auto mt-12 max-w-[var(--reader-width)] border-t border-line pt-5 font-mono text-[10px] leading-relaxed text-muted">
-            <p><span className="text-ink">Source:</span> <a href={content.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-lime-text underline underline-offset-2">{content.sourceUrl}</a></p>
-            <p className="mt-1"><span className="text-ink">Attribution:</span> {content.attribution}{content.license ? ` · ${content.license}` : ""}</p>
+            <p><span className="text-reader-fg">Source:</span> <a href={content.sourceUrl} target="_blank" rel="noopener noreferrer" className="text-lime-text underline underline-offset-2">{content.sourceUrl}</a></p>
+            <p className="mt-1"><span className="text-reader-fg">Attribution:</span> {content.attribution}{content.license ? ` · ${content.license}` : ""}</p>
             <p className="mt-1">Catalog: EbookFoundation/free-programming-books · CC BY 4.0</p>
           </footer>
         )}

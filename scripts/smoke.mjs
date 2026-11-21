@@ -34,7 +34,7 @@ await check("pdf worker", "/pdf/pdf.worker.min.mjs", (body) => body.length > 100
 for (const entry of readable) {
   const book = books.find((item) => item.id === entry.bookId);
   await check(`detail: ${book.title}`, `/books/${book.id}`, (body) => body.includes(book.title));
-  await check(`reader: ${book.title}`, `/read/${book.id}`, (body) => body.includes(book.title) && body.includes("reader-scope"));
+  await check(`reader: ${book.title}`, `/read/${book.id}`, (body) => body.includes(book.title) && body.includes("reader-scope") && body.includes("Table of contents") && body.includes("Chapter navigation") && body.includes("Next"));
   await check(`content: ${book.title}`, entry.path, () => true);
 }
 
