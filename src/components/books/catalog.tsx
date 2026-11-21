@@ -91,19 +91,19 @@ export function Catalog() {
             <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or author..." className="h-9 rounded-[12px] border-line bg-card pl-9 text-[13px] focus:border-lime" aria-label="Search catalog" />
           </div>
           <Select value={language || "__all__"} onValueChange={(value) => setLanguage(value === "__all__" ? "" : value)}>
-            <SelectTrigger className="w-[130px]" aria-label="Filter by language"><SelectValue placeholder="Language" /></SelectTrigger>
+            <SelectTrigger className="w-auto min-w-[140px] whitespace-nowrap" aria-label="Filter by language"><SelectValue placeholder="Language" /></SelectTrigger>
             <SelectContent><SelectItem value="__all__">All languages</SelectItem>{languages.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
           </Select>
           <Select value={category || "__all__"} onValueChange={(value) => setCategory(value === "__all__" ? "" : value)}>
-            <SelectTrigger className="w-[140px]" aria-label="Filter by category"><SelectValue placeholder="Category" /></SelectTrigger>
+            <SelectTrigger className="w-auto min-w-[140px] whitespace-nowrap" aria-label="Filter by category"><SelectValue placeholder="Category" /></SelectTrigger>
             <SelectContent><SelectItem value="__all__">All categories</SelectItem>{categories.map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent>
           </Select>
           <Select value={format || "__all__"} onValueChange={(value) => setFormat(value === "__all__" ? "" : value)}>
-            <SelectTrigger className="w-[110px]" aria-label="Filter by format"><SelectValue placeholder="Format" /></SelectTrigger>
+            <SelectTrigger className="w-auto min-w-[140px] whitespace-nowrap" aria-label="Filter by format"><SelectValue placeholder="Format" /></SelectTrigger>
             <SelectContent><SelectItem value="__all__">All formats</SelectItem>{formats.map((item) => <SelectItem key={item} value={item}>{item === "unknown" ? "unverified" : item}</SelectItem>)}</SelectContent>
           </Select>
           <Select value={availability} onValueChange={(value) => setAvailability(value as Availability)}>
-            <SelectTrigger className="w-[125px]" aria-label="Filter by reading availability"><SelectValue placeholder="Availability" /></SelectTrigger>
+            <SelectTrigger className="w-auto min-w-[140px] whitespace-nowrap" aria-label="Filter by reading availability"><SelectValue placeholder="Availability" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Any availability</SelectItem>
               <SelectItem value="readable">Readable here</SelectItem>
@@ -111,7 +111,7 @@ export function Catalog() {
             </SelectContent>
           </Select>
           <Select value={sort} onValueChange={(value) => setSort(value as Sort)}>
-            <SelectTrigger className="w-[125px]" aria-label="Sort results"><SelectValue placeholder="Sort" /></SelectTrigger>
+            <SelectTrigger className="w-auto min-w-[140px] whitespace-nowrap" aria-label="Sort results"><SelectValue placeholder="Sort" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="title">Sort: A → Z</SelectItem>
               <SelectItem value="new">Sort: newest</SelectItem>

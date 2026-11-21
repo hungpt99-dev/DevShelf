@@ -63,22 +63,29 @@ jobs:
           if [ "$FORCE" = "true" ]; then extra="--force"; fi
           npm run sync -- $extra
 
+      - name: Fetch book covers
+        id: covers
+        run: |
+          set -euo pipefail
+          npm run sync:covers -- --limit 200 --delay 1000 | tee .cache/covers.log
+          grep '^CHANGED=' .cache/covers.log >> "$GITHUB_OUTPUT"
+
       - name: Validate generated data
         run: npm run validate:data
 
       - name: Test parser and check types
-        if: steps.check.outputs.CHANGED == 'true'
+        if: steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true'
         run: |
           npm test
           npm run typecheck
 
       - name: Commit new dataset
-        if: steps.check.outputs.CHANGED == 'true'
+        if: steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true'
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data public/content scripts/reports
+          git add public/data public/content scripts/reports scripts/cache
           if git diff --cached --quiet; then
             echo "No tracked data changes to commit."
           else
@@ -87,20 +94,20 @@ jobs:
           fi
 
       - name: Build static website
-        if: steps.check.outputs.CHANGED == 'true'
+        if: steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true'
         env:
           NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
         run: npm run build
 
       - name: Upload Pages artifact
-        if: steps.check.outputs.CHANGED == 'true'
+        if: steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           path: out
 
       - name: Deploy to GitHub Pages
         id: deployment
-        if: steps.check.outputs.CHANGED == 'true'
+        if: steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true'
         uses: actions/deploy-pages@v4
 
       - name: Check Cloudflare credentials
@@ -118,11 +125,11 @@ jobs:
 
       # Cloudflare serves from the site root, so rebuild without the Pages subpath.
       - name: Build for Cloudflare (root path)
-        if: steps.check.outputs.CHANGED == 'true' && steps.cloudflare.outputs.enabled == 'true'
+        if: (steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true') && steps.cloudflare.outputs.enabled == 'true'
         run: npm run build
 
       - name: Ensure Cloudflare Pages project exists
-        if: steps.check.outputs.CHANGED == 'true' && steps.cloudflare.outputs.enabled == 'true'
+        if: (steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true') && steps.cloudflare.outputs.enabled == 'true'
         continue-on-error: true
         uses: cloudflare/wrangler-action@v4
         with:
@@ -132,7 +139,7 @@ jobs:
 
       - name: Deploy to Cloudflare Pages
         id: cloudflare_deploy
-        if: steps.check.outputs.CHANGED == 'true' && steps.cloudflare.outputs.enabled == 'true'
+        if: (steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true') && steps.cloudflare.outputs.enabled == 'true'
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}

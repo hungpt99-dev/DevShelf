@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "sync": "tsx scripts/sync-books.ts",
     "sync:check": "tsx scripts/sync-books.ts --check",
+    "sync:covers": "tsx scripts/fetch-covers.ts",
     "validate:data": "tsx scripts/validate-data.ts",
     "smoke": "node scripts/smoke.mjs",
     "check:readme": "node scripts/check-readme.mjs README.md",

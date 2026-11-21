@@ -24,6 +24,11 @@ await check("categories index", "/data/categories.json", (body) => JSON.parse(bo
 await check("languages index", "/data/languages.json", (body) => JSON.parse(body).length > 20);
 await check("metadata", "/data/metadata.json", (body) => JSON.parse(body).repository === "EbookFoundation/free-programming-books");
 await check("sync history", "/data/sync-history.json", (body) => Array.isArray(JSON.parse(body)) && JSON.parse(body).length > 0);
+await check("covers index", "/data/covers.json", (body) => {
+  const covers = JSON.parse(body);
+  return covers && typeof covers === "object" && Object.values(covers).every((url) => typeof url === "string" && url.startsWith("https://"));
+});
+await check("default cover", "/images/default-cover.svg", (body) => body.includes("<svg") && body.includes("#c8f542"));
 await check("pdf worker", "/pdf/pdf.worker.min.mjs", (body) => body.length > 10000);
 
 for (const entry of readable) {

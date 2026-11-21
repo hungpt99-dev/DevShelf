@@ -73,15 +73,16 @@ function main(): void {
   const categories = z.array(z.object({ name: z.string(), slug: z.string(), count: z.number() })).safeParse(readJson("categories.json"));
   const languages = z.array(z.object({ code: z.string(), name: z.string(), count: z.number() })).safeParse(readJson("languages.json"));
   const history = z.array(HistorySchema).safeParse(readJson("sync-history.json"));
+  const covers = z.record(z.string(), z.url()).safeParse(readJson("covers.json"));
 
-  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history })) {
+  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history, covers })) {
     if (!result.success) errors.push(`${name}: ${result.error.issues.slice(0, 3).map((issue) => issue.message).join("; ")}`);
   }
   if (errors.length) {
     console.error("FAIL\n" + errors.join("\n"));
     process.exit(1);
   }
-  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success) {
+  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success || !covers.success) {
     process.exit(1); // Narrowing for TypeScript after schema errors.
   }
 
@@ -94,6 +95,12 @@ function main(): void {
     if (book.description !== null) errors.push(`${book.id}: description must be null`);
     if (book.license && !/^(CC|GFDL|GNU|MIT|Public Domain)/i.test(book.license)) errors.push(`${book.id}: suspicious license "${book.license}"`);
   }
+  for (const [id, url] of Object.entries(covers.data)) {
+    if (!ids.has(id)) errors.push(`cover entry references unknown book ${id}`);
+    if (!url.startsWith("https://")) errors.push(`cover URL for ${id} is not https`);
+    else if (new URL(url).hostname !== "covers.openlibrary.org") errors.push(`cover URL for ${id} is not from Open Library`);
+  }
+
   const meta = metadata.data;
   if (meta.counts.books !== bookList.length) errors.push(`metadata book count ${meta.counts.books} != ${bookList.length}`);
   if (meta.counts.categories !== categories.data.length) errors.push("metadata category count mismatch");
@@ -128,6 +135,6 @@ function main(): void {
     console.error(`FAIL (${errors.length})\n` + errors.slice(0, 20).join("\n"));
     process.exit(1);
   }
-  console.log(`PASS — ${bookList.length} books, ${categories.data.length} categories, ${languages.data.length} languages, ${readableList.length} readable books, ${history.data.length} sync-history entries`);
+  console.log(`PASS — ${bookList.length} books, ${categories.data.length} categories, ${languages.data.length} languages, ${readableList.length} readable books, ${history.data.length} sync-history entries, ${Object.keys(covers.data).length} cover images`);
 }
 main();

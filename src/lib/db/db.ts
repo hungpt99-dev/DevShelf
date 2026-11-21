@@ -45,6 +45,7 @@ export interface Preferences {
   readingWidth: number;
   lineHeight: number;
   sidebarDefaultOpen: boolean;
+  loadCoverImages: boolean;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -55,6 +56,7 @@ export const DEFAULT_PREFERENCES: Preferences = {
   readingWidth: 68,
   lineHeight: 1.75,
   sidebarDefaultOpen: true,
+  loadCoverImages: true,
 };
 
 class DevShelfDatabase extends Dexie {

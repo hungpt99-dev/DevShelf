@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useState } from "react";
 import { ArrowRight, Clock, Trash2 } from "lucide-react";
-import { BookCover } from "@/components/books/book-cover";
+import { BookCover } from "@/components/book/BookCover";
 import { getProgress, getReadingList, removeFromList } from "@/lib/db/operations";
 import type { ListStatus } from "@/lib/db/db";
 
@@ -19,7 +19,7 @@ function EntryCard({ entry, progress }: { entry: Entry; progress: number }) {
   if (!book) return null;
   return (
     <article className="flex flex-wrap items-center gap-4 rounded-[16px] border border-line bg-card p-3 hover:border-lime">
-      <Link href={`/books/${book.id}`} className="w-14 shrink-0"><BookCover book={book} /></Link>
+      <Link href={`/books/${book.id}`} className="w-14 shrink-0"><BookCover book={book} small /></Link>
       <div className="min-w-[180px] flex-1">
         <Link href={`/books/${book.id}`} className="text-[13px] font-medium hover:text-lime-text">{book.title}</Link>
         <p className="mt-0.5 truncate text-[11px] text-muted">{book.authors.length ? book.authors.join(", ") : "Unknown"} · {book.language}</p>

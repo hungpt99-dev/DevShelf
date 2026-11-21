@@ -55,7 +55,7 @@ export default function HomePage() {
             <div>
               <h2 className="text-[18px] font-medium">Built on open data</h2>
               <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted">
-                Every record comes from the <a href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-lime-text">EbookFoundation/free-programming-books</a> catalog. DevShelf keeps the original link and source file for each book, and never invents descriptions, covers or ratings.
+                Every record comes from the <a href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-lime-text">EbookFoundation/free-programming-books</a> catalog. DevShelf keeps the original link and source file for each book, and never invents descriptions or ratings. Cover images, when enabled, are courtesy of Open Library; otherwise each book gets a locally generated cover.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">

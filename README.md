@@ -72,6 +72,7 @@ Generated indexes are committed, so the app runs immediately. To refresh from up
 
 ```bash
 npm run sync          # parse the real catalog and regenerate public/data/*.json
+npm run sync:covers   # match covers from Open Library (polite, resumable)
 npm run validate:data # verify indexes, attribution and bundled content
 ```
 
@@ -94,7 +95,7 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Book detail | Provenance | Source file/line, license when stated, alternate links, related books |
 | Reader | Distraction-free reading | TOC, themes, font controls, keyboard nav, copyable code blocks, PDF zoom/pages, saved position |
 | Reading list | Local personal library | Saved / reading / completed, progress, continue reading, remove |
-| Settings | Preferences and data | Theme, font, width, line height, sidebar, JSON export/import |
+| Settings | Preferences and data | Theme, font, width, line height, sidebar, cover image opt-out, JSON export/import |
 
 ## Measured
 
@@ -103,9 +104,9 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Books from source | 4,735 | `npm run validate:data` |
 | Categories / languages | 498 / 46 | `public/data/metadata.json` |
 | Bundled readable books | 3 | `public/data/readable.json` |
-| Unit tests | 8 passing | `npm test` |
+| Unit tests | 16 passing | `npm test` |
 | Static build | exit code 0; 9,477 static pages | `npm run build` (output in `out/`) |
-| HTTP smoke checks | 19/19 | `npm run smoke` against a local `out/` server |
+| HTTP smoke checks | 21/21 | `npm run smoke` against a local `out/` server |
 
 Counts are derived from the committed catalog snapshot, not typed into the UI. The homepage reads the same files.
 
@@ -116,7 +117,8 @@ Counts are derived from the committed catalog snapshot, not typed into the UI. T
 | `scripts/reading-sources.json` | The only books whose content may be bundled; preserves catalog link, raw download URL, attribution and license | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) |
 | `.github/workflows/sync-books.yml` | 6-hour schedule, manual dispatch, validation, GitHub Pages and optional Cloudflare deployment | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | `next.config.ts` | Static export and optional `NEXT_PUBLIC_BASE_PATH` for project Pages sites | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
-| `public/data/*.json` | Generated catalog, categories, languages, readable map, metadata and sync history | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| `public/data/*.json` | Generated catalog, categories, languages, readable map, metadata, sync history and cover URLs | [ARCHITECTURE.md](ARCHITECTURE.md) |
+| `scripts/cache/cover-misses.json` | Cover lookups that found no safe match; retried after 30 days or with `--force` | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) |
 | `docs/assets/` | Product mark and light/dark README banners | [README](#screenshots) |
 
 ## Automation
@@ -126,7 +128,8 @@ The sync workflow runs every 6 hours and on manual dispatch (`force=true` rebuil
 1. `git ls-remote` resolves the upstream `main` SHA and compares it with `metadata.json.commit`.
 2. A tarball pinned to that SHA is parsed; added, updated and removed records are diffed by stable ID.
 3. All indexes and the sync report are regenerated; `npm run validate:data` gates deployment.
-4. Except on forced manual runs, the dataset is committed and Pages are rebuilt only when records change. With `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set as repo secrets, the workflow also rebuilds for the site root and deploys to Cloudflare Pages (`devshelf-hungpt99`).
+4. `npm run sync:covers` matches a bounded batch of new books against Open Library, caches misses and writes `public/data/covers.json`. A covers-only change still commits and redeploys.
+5. Except on forced manual runs, the dataset is committed and Pages are rebuilt only when records change. With `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set as repo secrets, the workflow also rebuilds for the site root and deploys to Cloudflare Pages (`devshelf-hungpt99`).
 
 Network or parse failures stop before any file is written, so the last known good dataset and deployment stay live. The app fetches only local static catalog files; it does not call GitHub or require API tokens at runtime. Outbound book links open the original resource in a new tab. No token is present in frontend code — credentials exist only in the Actions runner. Cloudflare setup details are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
@@ -137,7 +140,7 @@ Network or parse failures stop before any file is written, so the last known goo
 | **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Deployment](docs/DEPLOYMENT.md) |
 | **Trusting it** | [Data sources & attribution](docs/DATA_SOURCES.md) · [Sync report](scripts/reports/sync-report.md) · [MIT license](LICENSE) |
 | **Building on it** | [Architecture](ARCHITECTURE.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
-| **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
+| **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Cover fetcher](scripts/fetch-covers.ts) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
 
 ## Architecture
 
@@ -161,7 +164,7 @@ flowchart LR
 
 | Area | State |
 | --- | --- |
-| Catalog ingestion, IDs, dedupe, diff history | **Implemented** — deterministic parser with 8 unit tests |
+| Catalog ingestion, IDs, dedupe, diff history | **Implemented** — deterministic parser with unit tests |
 | Black/white/lime UI with generated covers | **Implemented** — verified at 375, 768 and 1280 px |
 | Search, filters, book details, related books | **Implemented** — entirely client-side |
 | Markdown reader | **Implemented** — 226-chapter TOC in the bundled Clean ABAP book |
@@ -170,16 +173,18 @@ flowchart LR
 | External resources | **Implemented** — detail page links to the original source; never scraped |
 | Progress, bookmarks, preferences, export/import | **Implemented** — Dexie/IndexedDB, no account |
 | Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the current head |
+| Real cover images | **Partial** — strict Open Library matches only; generated covers fill every gap |
 | Recently added shelf | **Implemented** — real sync history; honest empty state when a sync adds nothing |
 | Cloudflare Pages deploy | **Partial** — secrets and steps are wired, but the deploy fails with auth code 10000 until the token also has `User → User Details:Read` and `User → Memberships:Read` |
 | PDF text layer and annotations | **Not implemented** — canvas rendering only; page navigation works |
 | Accounts, cloud sync, runtime scraping | **Not implemented by design** — no backend and no site access bypass |
-| Descriptions, covers, ratings, popularity | **Not implemented** — the source catalog does not provide them; card covers are generated typography, not fake book art |
+| Descriptions, ratings, popularity | **Not implemented** — the source catalog does not provide them. Real covers come from Open Library; generated covers are decorative typography, never fake book art |
 
 ## Security and privacy
 
 - No backend, REST API, database server, authentication or analytics.
 - Search queries and reading positions never leave the browser.
+- With cover images enabled (the default), the browser requests matched images from `covers.openlibrary.org` — a third party. Turn this off in Settings to use generated covers only; no external image request is then made. Cover images are courtesy of [Open Library](https://openlibrary.org/).
 - `GITHUB_TOKEN` and Cloudflare credentials exist only inside the Actions runner; nothing token-like ships to `out/`.
 - Synchronization touches only `public/data/` and allowlisted `public/content/`; IndexedDB user data is never modified.
 - Bundled HTML is sanitized with DOMPurify; external links use `rel="noopener noreferrer"`.
@@ -201,7 +206,7 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 
 - GitHub Actions: green sync/deploy run `44887877659` on the pre-restyle head; run `44889512574` deployed the restyled site to GitHub Pages, then failed only at the optional Cloudflare step (token permissions, see Status).
 - The live GitHub Pages URL serves the restyled homepage, catalog and PDF reader (checked after the deploy).
-- `npm run smoke` against the served static export: 19/19 checks.
+- `npm run smoke` against the served static export: 21/21 checks.
 - Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 
 ## Roadmap

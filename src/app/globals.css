@@ -16,6 +16,7 @@
   --lime-text: #c8f542;
   --button-bg: #c8f542;
   --button-fg: #1a2200;
+  --cover-dark: #222222;
 
   --foreground: var(--ink);
   --card-foreground: var(--ink);
@@ -57,6 +58,7 @@
   --lime-text: #4d7c0f;
   --button-bg: #111111;
   --button-fg: #ffffff;
+  --cover-dark: #222222;
 
   --foreground: var(--ink);
   --card-foreground: var(--ink);
@@ -94,6 +96,7 @@
   --lime-text: #4d7c0f;
   --button-bg: #2b251c;
   --button-fg: #faf6ec;
+  --cover-dark: #222222;
 
   --foreground: var(--ink);
   --card-foreground: var(--ink);
@@ -144,6 +147,7 @@
   --color-lime-text: var(--lime-text);
   --color-button-bg: var(--button-bg);
   --color-button-fg: var(--button-fg);
+  --color-cover-dark: var(--cover-dark);
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;

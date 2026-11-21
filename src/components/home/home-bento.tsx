@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 import { ArrowRight, BookOpen } from "lucide-react";
+import { BookCover } from "@/components/book/BookCover";
 import { getProgress, getReadingList } from "@/lib/db/operations";
 
 interface Stats { books: number; categories: number; languages: number; readable: number }
@@ -31,10 +32,13 @@ export function HomeBento({ stats }: { stats: Stats }) {
     <section className={`grid gap-3 ${book ? "md:grid-cols-[3fr_2fr]" : "md:grid-cols-1"}`} aria-label="Library overview">
       {book && (
         <div className="flex min-h-[210px] flex-col justify-between rounded-[16px] border border-lime bg-lime p-6 text-on-lime">
-          <div>
-            <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-70">Continue reading</p>
-            <h2 className="mt-3 max-w-xl text-[22px] font-medium leading-tight tracking-tight">{book.title}</h2>
-            <p className="mt-1 text-[12px] opacity-75">{location}</p>
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="w-12 shrink-0"><BookCover book={book} small /></div>
+            <div className="min-w-0">
+              <p className="font-mono text-[10px] uppercase tracking-[0.12em] opacity-70">Continue reading</p>
+              <h2 className="mt-2 line-clamp-2 text-[20px] font-medium leading-tight tracking-tight">{book.title}</h2>
+              <p className="mt-1 text-[12px] opacity-75">{location}</p>
+            </div>
           </div>
           <div>
             <div className="h-2 w-full overflow-hidden rounded-full bg-[#1a2200]/20">

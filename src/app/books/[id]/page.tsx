@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import { BookActions } from "@/components/books/book-actions";
-import { BookCover } from "@/components/books/book-cover";
+import { BookCover } from "@/components/book/BookCover";
 import { ShelfRow } from "@/components/books/shelf-row";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { getBook, getBooks, getReadable, getRelatedBooks } from "@/lib/data";

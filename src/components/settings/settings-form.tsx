@@ -79,6 +79,9 @@ export function SettingsForm() {
         <Row label="Sidebar open by default" description="Table of contents state when opening a book.">
           <Switch checked={effective.sidebarDefaultOpen} onCheckedChange={(checked) => update("sidebarDefaultOpen", checked)} aria-label="Sidebar open by default" />
         </Row>
+        <Row label="Load cover images from Open Library" description="When off, covers are generated locally and no third-party image requests are made.">
+          <Switch checked={effective.loadCoverImages} onCheckedChange={(checked) => update("loadCoverImages", checked)} aria-label="Load cover images from Open Library" />
+        </Row>
       </section>
 
       <section className="rounded-[16px] border border-line bg-card p-5">
