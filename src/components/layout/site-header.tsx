@@ -85,7 +85,7 @@ export function SiteHeader() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <a href="https://github.com/EbookFoundation/free-programming-books" target="_blank" rel="noopener noreferrer" className="hidden size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime sm:flex" aria-label="Source repository on GitHub">
+          <a href="https://github.com/hungpt99-dev/DevShelf" target="_blank" rel="noopener noreferrer" className="hidden size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime sm:flex" aria-label="DevShelf on GitHub">
             <Github className="size-4" aria-hidden />
           </a>
           <button type="button" onClick={() => setMobileOpen((open) => !open)} className="flex size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime md:hidden" aria-label="Toggle navigation">
