@@ -4,6 +4,7 @@ import {
   type BookmarkRecord, type ListStatus, type LocalBook, type PreferenceRecord,
   type Preferences, type ProgressRecord, type ReadingListRecord,
 } from "./db";
+import { normalizeExport } from "./export-format";
 
 async function safe<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   try {
@@ -136,40 +137,34 @@ export async function setPreference<K extends keyof Preferences>(key: K, value: 
 export async function exportData(): Promise<string> {
   const db = getDb();
   const data = {
-    version: 1,
+    version: 2,
+    schemaVersion: 2,
     exportedAt: new Date().toISOString(),
     books: db ? await db.books.toArray() : [],
     readingProgress: db ? await db.readingProgress.toArray() : [],
     readingList: db ? await db.readingList.toArray() : [],
     bookmarks: db ? await db.bookmarks.toArray() : [],
     preferences: db ? await db.preferences.toArray() : [],
+    shelves: [],
+    highlights: [],
+    sessions: [],
   };
   return JSON.stringify(data, null, 2);
 }
 
 export async function importData(text: string): Promise<{ books: number; readingList: number; bookmarks: number }> {
-  const parsed = JSON.parse(text) as {
-    version?: number;
-    books?: LocalBook[];
-    readingProgress?: ProgressRecord[];
-    readingList?: ReadingListRecord[];
-    bookmarks?: BookmarkRecord[];
-    preferences?: PreferenceRecord[];
-  };
-  if (parsed.version !== 1 || !Array.isArray(parsed.books) || !Array.isArray(parsed.readingList)) {
-    throw new Error("Not a DevShelf v1 export file");
-  }
+  const parsed = normalizeExport(JSON.parse(text) as unknown);
   const db = getDb();
   if (!db) throw new Error("IndexedDB is unavailable in this browser");
   await db.transaction("rw", db.books, db.readingProgress, db.readingList, db.bookmarks, db.preferences, async () => {
     await Promise.all([
       db.books.clear(), db.readingProgress.clear(), db.readingList.clear(), db.bookmarks.clear(), db.preferences.clear(),
     ]);
-    await db.books.bulkAdd(parsed.books ?? []);
-    await db.readingProgress.bulkAdd(parsed.readingProgress ?? []);
-    await db.readingList.bulkAdd(parsed.readingList ?? []);
-    await db.bookmarks.bulkAdd(parsed.bookmarks ?? []);
-    await db.preferences.bulkAdd(parsed.preferences ?? []);
+    await db.books.bulkAdd(parsed.books);
+    await db.readingProgress.bulkAdd(parsed.readingProgress);
+    await db.readingList.bulkAdd(parsed.readingList);
+    await db.bookmarks.bulkAdd(parsed.bookmarks);
+    await db.preferences.bulkAdd(parsed.preferences);
   });
   return { books: parsed.books.length, readingList: parsed.readingList.length, bookmarks: parsed.bookmarks?.length ?? 0 };
 }
