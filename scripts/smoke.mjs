@@ -15,7 +15,7 @@ async function check(name, path, predicate) {
   checks.push({ name, path, status: response.status, ok, bytes: body.length });
 }
 
-await check("homepage", "/", (body) => body.includes("Your library for learning to code.") && body.includes("Featured categories"));
+await check("homepage", "/", (body) => ["Your library for learning to code.", "Featured categories", "Last synchronized", "Source repository"].every((needle) => body.includes(needle)));
 await check("catalog", "/books", (body) => body.includes("Explore the library") && body.includes("All languages"));
 await check("reading list", "/reading-list", (body) => body.includes("Reading list"));
 await check("settings", "/settings", (body) => body.includes("Appearance") && body.includes("Export JSON"));
@@ -23,6 +23,7 @@ await check("book index", "/data/books.json", (body) => JSON.parse(body).length 
 await check("categories index", "/data/categories.json", (body) => JSON.parse(body).length > 100);
 await check("languages index", "/data/languages.json", (body) => JSON.parse(body).length > 20);
 await check("metadata", "/data/metadata.json", (body) => JSON.parse(body).repository === "EbookFoundation/free-programming-books");
+await check("sync history", "/data/sync-history.json", (body) => Array.isArray(JSON.parse(body)) && JSON.parse(body).length > 0);
 await check("pdf worker", "/pdf/pdf.worker.min.mjs", (body) => body.length > 10000);
 
 for (const entry of readable) {

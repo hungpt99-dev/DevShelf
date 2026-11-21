@@ -32,11 +32,26 @@ The generated JSON files are committed in `public/data/`, so the app also runs w
 | --- | --- |
 | `npm run sync` | Download the repository tarball, parse catalog Markdown, deduplicate, generate indexes and bundle the allowlisted reading content. `--source <dir>` parses a local checkout; `--no-content` skips content downloads. |
 | `npm run validate:data` | Validate all generated JSON with Zod and check that readable content files exist. |
-| `npm run test:parser` | Unit tests for the pure Markdown parser (headings, authors, formats, licenses, deduplication). |
+| `npm run sync:check` | Print `CHANGED=true/false` by comparing the upstream commit with the last successful sync. |
+| `npm test` | Unit tests for the Markdown parser and the added/updated/removed diff logic. |
 | `npm run typecheck` | TypeScript strict-mode check. |
 | `npm run lint` | ESLint. |
 | `npm run build` | Static production export into `out/`. |
 | `npm start` | Serve the built `out/` directory locally. |
+
+## Automatic synchronization
+
+`.github/workflows/sync-books.yml` keeps the catalog current without a server or manual intervention:
+
+- Runs every 6 hours (`0 */6 * * *`) and on `workflow_dispatch`.
+- Detects upstream changes with `git ls-remote`; if the `main` commit matches the last successful sync, validation still runs but no commit, build or deployment happens.
+- On a change, downloads a tarball pinned to that exact commit, re-parses the catalog, computes added/updated/removed resources, regenerates every index, validates the data, commits the dataset, builds and deploys to GitHub Pages.
+- `workflow_dispatch` offers a `force` input to rebuild/redeploy even when upstream is unchanged.
+- On any network, parse, validation or content failure the job stops before writing: the last known good dataset and the live deployment are retained, and an error report is attached to the run.
+
+The website displays the last synchronized timestamp, total books, recently added books from `public/data/sync-history.json`, and the source repository link. Browser-stored reading progress, bookmarks and preferences are never touched by synchronization.
+
+Setup: enable GitHub Pages with **Source: GitHub Actions** in repository settings. No token is placed in frontend code — the workflow uses the built-in `GITHUB_TOKEN` for the data commit and Pages deployment.
 
 ## Data and attribution
 

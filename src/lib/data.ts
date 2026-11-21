@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import type { Book, CategoryRecord, LanguageRecord, LibraryMetadata, ReadableRecord } from "@/types/book";
+import type { Book, CategoryRecord, LanguageRecord, LibraryMetadata, ReadableRecord, SyncHistoryEntry } from "@/types/book";
 
 const DATA_DIR = join(process.cwd(), "public", "data");
 
@@ -14,6 +14,7 @@ let metadataCache: LibraryMetadata | null = null;
 let categoriesCache: CategoryRecord[] | null = null;
 let languagesCache: LanguageRecord[] | null = null;
 let readableCache: ReadableRecord[] | null = null;
+let historyCache: SyncHistoryEntry[] | null = null;
 let bookIndex: Map<string, Book> | null = null;
 
 export function getBooks(): Book[] {
@@ -44,6 +45,19 @@ export function getLanguages(): LanguageRecord[] {
 export function getReadable(): ReadableRecord[] {
   readableCache ??= load<ReadableRecord[]>("readable.json");
   return readableCache;
+}
+
+export function getSyncHistory(): SyncHistoryEntry[] {
+  historyCache ??= readJsonSafe<SyncHistoryEntry[]>("sync-history.json", []);
+  return historyCache;
+}
+
+function readJsonSafe<T>(name: string, fallback: T): T {
+  try {
+    return load<T>(name);
+  } catch {
+    return fallback; // Older deployed datasets may predate the history file.
+  }
 }
 
 export function getRelatedBooks(book: Book, limit = 6): Book[] {

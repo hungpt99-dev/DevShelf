@@ -18,6 +18,7 @@ All generated book records keep `source.repository`, `source.file`, `source.head
 | `public/data/languages.json` | Language codes, names and counts derived from source filenames. |
 | `public/data/readable.json` | Allowlisted bundled content mapping: book ID → local path, original source URL, attribution, license and asset base. |
 | `public/data/metadata.json` | Provenance, commit, sync timestamp, license and aggregate counts. |
+| `public/data/sync-history.json` | Last 24 synchronization runs with added/updated/removed book IDs and counts; drives "New in this sync" on the homepage. |
 | `scripts/reports/sync-report.md` | Human-readable synchronization report, including per-file counts and content download status. |
 
 ## Bundled reading content
@@ -31,6 +32,10 @@ Content is downloaded **only** from URLs that already appear in the catalog and 
 | The Little Go Book | PDF | `https://www.openmymind.net/assets/go/go.pdf` | CC BY-NC-SA per the catalog entry; Karl Seguin |
 
 The reader displays attribution and license for each of these books, plus the upstream catalog attribution.
+
+## Change detection
+
+Each run compares the upstream `main` commit SHA (from `git ls-remote`) with `metadata.json.commit`. Changed runs are diffed by stable book ID: new IDs are *added*, missing IDs are *removed*, and records whose source-derived fields changed are *updated*. Volatile timestamps and local reading state are excluded from that comparison. The synchronization report lists counts and sample titles for all three categories.
 
 ## Integrity rules
 

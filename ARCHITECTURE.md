@@ -21,6 +21,14 @@ Browser ──Dexie/IndexedDB──▶ reading list, progress, bookmarks, prefer
 
 IDs are `b-` plus the first 12 hex characters of SHA-1 over the normalized URL (no hash, lowercase host, no tracking parameters). Deduplication is by that normalized URL, merging categories, authors, alternate links, licenses and source references.
 
+## Automatic synchronization (CI only)
+
+`scripts/sync-books.ts` is independent of the frontend app. In `--check` mode it resolves the upstream `main` SHA with `git ls-remote` and compares it with `metadata.json.commit`. A normal run downloads one tarball pinned to that SHA, parses it with the pure parser, diffs old/new records by stable ID, stages allowlisted content downloads in `.cache/`, and only then writes `public/data/*.json`, `public/content/`, `sync-history.json` and the report. Any failure aborts before writes and emits `scripts/reports/sync-error.md`, so the last known good dataset survives.
+
+`public/data/sync-history.json` keeps the last 24 runs with added/updated/removed IDs and counts. The homepage reads its latest entry for "New in this sync"; the first entry is marked `initial` because there was no earlier run to diff against.
+
+The GitHub Actions workflow runs this pipeline every 6 hours and on demand, validates data, commits only when the upstream commit changed, and deploys the static export to GitHub Pages. The frontend never calls GitHub or any API at runtime; all tokens stay in the Actions runner.
+
 ## Reader engine
 
 `ReaderProvider` (`src/lib/readers/types.ts`) defines `canRead`, `getReaderType` and `loadContent`. Implementations:

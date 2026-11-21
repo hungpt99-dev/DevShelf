@@ -57,6 +57,16 @@ export interface ReadableRecord {
   downloadedAt: string;
 }
 
+export interface SyncHistoryEntry {
+  syncedAt: string;
+  commit: string | null;
+  added: string[];
+  updated: string[];
+  removed: string[];
+  counts: { books: number; added: number; updated: number; removed: number };
+  initial?: boolean;
+}
+
 export interface LibraryMetadata {
   repository: string;
   sourceUrl: string;

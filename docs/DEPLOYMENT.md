@@ -2,6 +2,14 @@
 
 DevShelf builds to a plain `out/` directory. No server, environment variables, secrets or database are needed.
 
+## GitHub Pages + automatic updates
+
+1. In repository **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**.
+2. The workflow at `.github/workflows/sync-books.yml` has `contents: write`, `pages: write` and `id-token: write`; it uses the built-in `GITHUB_TOKEN` (no repository secret to create, and no token in frontend code).
+3. It runs every 6 hours and can be started manually from the Actions tab. The manual `force` input rebuilds and redeploys even if upstream is unchanged.
+4. A run with no upstream change validates the existing dataset but skips commit, build and deployment, so Pages is not redeployed unnecessarily.
+5. A failed run leaves the last known good dataset and the current Pages deployment in place, writes `scripts/reports/sync-error.md` and adds a failure summary to the run.
+
 ```bash
 npm ci
 npm run build

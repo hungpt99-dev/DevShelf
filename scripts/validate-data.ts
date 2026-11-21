@@ -45,6 +45,16 @@ const MetadataSchema = z.object({
   notes: z.array(z.string()),
 });
 
+const HistorySchema = z.object({
+  syncedAt: z.iso.datetime(),
+  commit: z.string().nullable(),
+  added: z.array(z.string()),
+  updated: z.array(z.string()),
+  removed: z.array(z.string()),
+  counts: z.object({ books: z.number(), added: z.number(), updated: z.number(), removed: z.number() }),
+  initial: z.boolean().optional(),
+});
+
 const ReadableSchema = z.object({
   bookId: z.string(), type: z.enum(["markdown", "html", "pdf"]), path: z.string().startsWith("/content/"),
   sourceUrl: z.url(), originalUrl: z.url(), license: z.string().nullable(), attribution: z.string().min(1),
@@ -62,15 +72,16 @@ function main(): void {
   const readable = z.array(ReadableSchema).safeParse(readJson("readable.json"));
   const categories = z.array(z.object({ name: z.string(), slug: z.string(), count: z.number() })).safeParse(readJson("categories.json"));
   const languages = z.array(z.object({ code: z.string(), name: z.string(), count: z.number() })).safeParse(readJson("languages.json"));
+  const history = z.array(HistorySchema).safeParse(readJson("sync-history.json"));
 
-  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages })) {
+  for (const [name, result] of Object.entries({ books, metadata, readable, categories, languages, history })) {
     if (!result.success) errors.push(`${name}: ${result.error.issues.slice(0, 3).map((issue) => issue.message).join("; ")}`);
   }
   if (errors.length) {
     console.error("FAIL\n" + errors.join("\n"));
     process.exit(1);
   }
-  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success) {
+  if (!books.success || !metadata.success || !readable.success || !categories.success || !languages.success || !history.success) {
     process.exit(1); // Narrowing for TypeScript after schema errors.
   }
 
@@ -101,6 +112,15 @@ function main(): void {
   for (const book of bookList.filter((item) => item.reading.available)) {
     if (!readableList.some((entry) => entry.bookId === book.id)) errors.push(`book ${book.id} claims readable but no content record`);
   }
+  const latest = history.data.at(-1);
+  if (!latest) errors.push("sync history is empty");
+  else {
+    if (latest.syncedAt !== meta.syncedAt) errors.push("latest sync history timestamp does not match metadata");
+    if (latest.commit !== meta.commit) errors.push("latest sync history commit does not match metadata");
+    if (latest.counts.added !== meta.counts.newSinceLastSync) errors.push("history added count does not match metadata newSinceLastSync");
+    for (const id of latest.added) if (!ids.has(id)) errors.push(`history added book ${id} is missing from books.json`);
+  }
+
   const categoryTotal = categories.data.reduce((sum, item) => sum + item.count, 0);
   if (categoryTotal < bookList.length) errors.push("category counts do not cover every book");
 
@@ -108,6 +128,6 @@ function main(): void {
     console.error(`FAIL (${errors.length})\n` + errors.slice(0, 20).join("\n"));
     process.exit(1);
   }
-  console.log(`PASS — ${bookList.length} books, ${categories.data.length} categories, ${languages.data.length} languages, ${readableList.length} readable books`);
+  console.log(`PASS — ${bookList.length} books, ${categories.data.length} categories, ${languages.data.length} languages, ${readableList.length} readable books, ${history.data.length} sync-history entries`);
 }
 main();

@@ -4,7 +4,7 @@ import { BookCard } from "@/components/books/book-card";
 import { SearchTrigger } from "@/components/search/search-trigger";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { Badge } from "@/components/ui/badge";
-import { getBooks, getCategories, getMetadata } from "@/lib/data";
+import { getBooks, getCategories, getMetadata, getSyncHistory } from "@/lib/data";
 
 const FEATURED_ALIASES = ["Java", "Python", "JavaScript", "TypeScript", "Go", "Rust", "C++", "System Design", "DevOps", "Databases", "AI & Machine Learning"];
 const ALIASES: Record<string, string> = {
@@ -17,11 +17,17 @@ export default function HomePage() {
   const books = getBooks();
   const categories = getCategories();
   const metadata = getMetadata();
+  const history = getSyncHistory();
+  const latestSync = history.at(-1);
+  const syncedLabel = `${metadata.syncedAt.replace("T", " ").slice(0, 16)} UTC`;
   const byName = new Map(categories.map((category) => [category.name, category]));
   const featured = FEATURED_ALIASES.map((alias) => byName.get(ALIASES[alias] ?? alias)).filter((item): item is NonNullable<typeof item> => Boolean(item));
 
-  const newBooks = books
-    .filter((book) => book.firstSeenAt === metadata.syncedAt)
+  const byId = new Map(books.map((book) => [book.id, book]));
+  const addedIds = latestSync?.added ?? [];
+  const newBooks = (addedIds.length
+    ? addedIds.map((id) => byId.get(id)).filter((book): book is NonNullable<typeof book> => Boolean(book))
+    : books.filter((book) => book.firstSeenAt === metadata.syncedAt))
     .sort((a, b) => a.title.localeCompare(b.title))
     .slice(0, 6);
   const curated = books
@@ -44,6 +50,14 @@ export default function HomePage() {
           <div className="mt-5 flex justify-center">
             <ButtonLink href="/books">Explore Library <ArrowRight className="size-4" aria-hidden /></ButtonLink>
           </div>
+          <p className="mt-7 text-xs text-muted-foreground">
+            Last synchronized <time dateTime={metadata.syncedAt} className="font-medium text-foreground">{syncedLabel}</time>
+            {" · "}{books.length.toLocaleString()} books
+            {" · "}<a href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-foreground">Source repository</a>
+            {latestSync && !latestSync.initial && (
+              <span> · {latestSync.counts.added} added, {latestSync.counts.updated} updated, {latestSync.counts.removed} removed</span>
+            )}
+          </p>
           <dl className="mx-auto mt-14 grid max-w-2xl grid-cols-3 gap-4 border-t border-border pt-6">
             <div><dt className="text-xs uppercase tracking-wider text-muted-foreground">Resources</dt><dd className="mt-1 text-2xl font-semibold tabular-nums">{books.length.toLocaleString()}</dd></div>
             <div><dt className="text-xs uppercase tracking-wider text-muted-foreground">Categories</dt><dd className="mt-1 text-2xl font-semibold tabular-nums">{categories.length}</dd></div>
@@ -80,7 +94,11 @@ export default function HomePage() {
           <div className="grid gap-10 lg:grid-cols-3">
             <div>
               <h3 className="flex items-center gap-2 text-sm font-semibold"><Sparkles className="size-4" aria-hidden /> New in this sync</h3>
-              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">Resources first seen in the {new Date(metadata.syncedAt).toLocaleDateString("en-US")} catalog snapshot.</p>
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
+                {latestSync?.initial
+                  ? "Initial catalog snapshot — no earlier synchronization to compare against."
+                  : `Recorded by synchronization history${latestSync ? ` at ${latestSync.syncedAt.replace("T", " ").slice(0, 16)} UTC` : ""}.`}
+              </p>
               <ul className="mt-4 space-y-3">
                 {newBooks.map((book) => <li key={book.id}><Link className="text-sm hover:text-primary" href={`/books/${book.id}`}>{book.title}</Link><p className="text-xs text-muted-foreground">{book.categories[0]} · {book.language}</p></li>)}
                 {newBooks.length === 0 && <li className="text-sm text-muted-foreground">No new resources in this sync.</li>}
