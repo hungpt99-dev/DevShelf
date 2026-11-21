@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="300" viewBox="0 0 1280 300" role="img" aria-label="DevShelf — your library for learning to code">
+  <rect width="1280" height="300" fill="#faf9f7"/>
+  <rect width="1280" height="4" fill="#2f4f47"/>
+  <g transform="translate(70 62)">
+    <rect width="176" height="176" rx="28" fill="#fffefc" stroke="#e5e0d9" stroke-width="2"/>
+    <rect x="30" y="38" width="116" height="18" rx="6" fill="#2f4f47"/>
+    <rect x="40" y="66" width="106" height="18" rx="6" fill="#9a7c58"/>
+    <rect x="24" y="94" width="128" height="18" rx="6" fill="#6f8d82"/>
+    <path d="M34 134h108" stroke="#24211e" stroke-width="6" stroke-linecap="round" opacity="0.75"/>
+    <circle cx="134" cy="42" r="7" fill="#e2c79f"/>
+  </g>
+  <text x="304" y="112" font-family="Inter, system-ui, sans-serif" font-size="48" font-weight="700" fill="#24211e">DevShelf</text>
+  <text x="306" y="156" font-family="Inter, system-ui, sans-serif" font-size="22" fill="#777069">Your library for learning to code.</text>
+  <g font-family="Inter, system-ui, sans-serif" font-size="15" fill="#3a3632">
+    <rect x="304" y="188" width="196" height="42" rx="8" fill="#fffefc" stroke="#e5e0d9" stroke-width="2"/>
+    <text x="320" y="215">4,735 free books</text>
+    <rect x="512" y="188" width="188" height="42" rx="8" fill="#fffefc" stroke="#e5e0d9" stroke-width="2"/>
+    <text x="528" y="215">Read in-browser</text>
+    <rect x="712" y="188" width="218" height="42" rx="8" fill="#fffefc" stroke="#e5e0d9" stroke-width="2"/>
+    <text x="728" y="215">Local-first library</text>
+  </g>
+  <text x="304" y="266" font-family="Inter, system-ui, sans-serif" font-size="14" fill="#777069">Built on the free-programming-books catalog · CC BY 4.0</text>
+</svg>

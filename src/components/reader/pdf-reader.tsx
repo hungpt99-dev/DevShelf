@@ -31,7 +31,10 @@ export default function PdfReader({
     let cancelled = false;
     import("pdfjs-dist").then(async (pdfjs) => {
       pdfjs.GlobalWorkerOptions.workerSrc = publicPath("/pdf/pdf.worker.min.mjs");
-      const task = pdfjs.getDocument({ url: publicPath(url) });
+      const task = pdfjs.getDocument({
+        url: publicPath(url),
+        standardFontDataUrl: publicPath("/pdf/standard_fonts/"),
+      });
       const document = await task.promise;
       if (cancelled) return;
       setPdf(document as unknown as PdfDocumentLike);

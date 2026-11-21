@@ -5,3 +5,4 @@ out
 *.tsbuildinfo
 .DS_Store
 public/pdf/pdf.worker.min.mjs
+public/pdf/standard_fonts/
