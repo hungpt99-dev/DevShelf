@@ -50,11 +50,12 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
   const effective = customized ? preferences : DARK_DEFAULTS;
 
   useEffect(() => {
+    document.documentElement.lang = effective.locale;
     document.documentElement.dataset.theme = effective.theme;
     try {
       window.localStorage.setItem("devshelf-theme", effective.theme);
     } catch { /* private browsing */ }
-  }, [effective.theme]);
+  }, [effective.theme, effective.locale]);
 
   const update = useCallback(<K extends keyof Preferences>(key: K, value: Preferences[K]) => {
     setPreferences((current) => ({ ...current, [key]: value }));

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Github } from "lucide-react";
+import { T } from "@/components/i18n/t";
 import { getMetadata } from "@/lib/data";
 
 export function SiteFooter() {
@@ -10,24 +11,24 @@ export function SiteFooter() {
         <div>
           <p className="flex items-center gap-2 text-sm font-medium"><span className="size-2 rounded-full bg-lime" aria-hidden /> DevShelf</p>
           <p className="mt-3 max-w-xs text-[13px] leading-relaxed text-muted">
-            A library of free programming books. No account, no backend, no tracking. Your shelf stays in your browser.
+            <T k="footer.tagline" />
           </p>
         </div>
         <div>
-          <p className="text-sm font-medium">Explore</p>
+          <p className="text-sm font-medium"><T k="footer.explore" /></p>
           <ul className="mt-3 space-y-2 text-[13px] text-muted">
-            <li><Link className="hover:text-lime-text" href="/books">All books</Link></li>
+            <li><Link className="hover:text-lime-text" href="/books"><T k="footer.allBooks" /></Link></li>
             <li><Link className="hover:text-lime-text" href="/reading-list">Reading list</Link></li>
             <li><Link className="hover:text-lime-text" href="/settings">Settings</Link></li>
           </ul>
         </div>
         <div>
-          <p className="text-sm font-medium">Data source</p>
+          <p className="text-sm font-medium"><T k="footer.dataSource" /></p>
           <p className="mt-3 text-[13px] leading-relaxed text-muted">
             Catalog from <a className="underline underline-offset-2 hover:text-lime-text" href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer">EbookFoundation/free-programming-books</a>, licensed <a className="underline underline-offset-2 hover:text-lime-text" href={metadata.license.url} target="_blank" rel="noopener noreferrer">CC BY 4.0</a>.
           </p>
           <p className="mt-3 text-[11px] leading-relaxed text-muted">
-            Cover images courtesy of <a className="underline underline-offset-2 hover:text-lime-text" href="https://openlibrary.org/" target="_blank" rel="noopener noreferrer">Open Library</a>. When enabled, your browser requests them from covers.openlibrary.org. Turn this off in <Link className="underline underline-offset-2 hover:text-lime-text" href="/settings">Settings</Link>.
+            <T k="footer.coverNote" />
           </p>
           <p className="mt-3 inline-flex items-center gap-1.5 font-mono text-[10px] text-muted">
             <Github className="size-3" aria-hidden /> synced {metadata.syncedAt.slice(0, 10)} · {metadata.counts.books.toLocaleString()} books

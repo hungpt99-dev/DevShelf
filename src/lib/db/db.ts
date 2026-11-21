@@ -46,6 +46,9 @@ export interface Preferences {
   lineHeight: number;
   sidebarDefaultOpen: boolean;
   loadCoverImages: boolean;
+  locale: "en" | "vi";
+  offlineMode: boolean;
+  readingStats: boolean;
 }
 
 export const DEFAULT_PREFERENCES: Preferences = {
@@ -57,6 +60,9 @@ export const DEFAULT_PREFERENCES: Preferences = {
   lineHeight: 1.75,
   sidebarDefaultOpen: true,
   loadCoverImages: true,
+  locale: "en",
+  offlineMode: false,
+  readingStats: false,
 };
 
 class DevShelfDatabase extends Dexie {

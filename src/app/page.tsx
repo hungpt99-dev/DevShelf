@@ -4,6 +4,7 @@ import { ShelfRow } from "@/components/books/shelf-row";
 import { CategoryChips } from "@/components/home/category-chips";
 import { HeroSearch } from "@/components/home/hero-search";
 import { HomeBento } from "@/components/home/home-bento";
+import { T } from "@/components/i18n/t";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { getBooks, getCategories, getMetadata, getSyncHistory } from "@/lib/data";
 
@@ -29,13 +30,13 @@ export default function HomePage() {
       <section className="border-b border-line">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center sm:px-6 sm:py-16">
           <p className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.08em] text-muted">
-            <span className="size-1.5 rounded-full bg-lime" aria-hidden /> {books.length.toLocaleString()} books · synced {synced}
+            <span className="size-1.5 rounded-full bg-lime" aria-hidden /> {books.length.toLocaleString()} <T k="home.synced" /> {synced}
           </p>
           <h1 className="mx-auto mt-7 max-w-4xl text-balance text-[34px] leading-[1.1] sm:text-[46px]">
-            Read the best programming books, <span className="bg-lime px-2 text-on-lime">free.</span>
+            <T k="home.titlePrefix" /> <span className="bg-lime px-2 text-on-lime"><T k="home.titleAccent" /></span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-pretty text-[14px] leading-relaxed text-muted sm:text-[15px]">
-            A quiet library of free programming books. Search it, open a book, and keep your place — all without an account.
+            <T k="home.subtitle" />
           </p>
           <div className="mt-9"><HeroSearch count={books.length} /></div>
           <CategoryChips categories={categories.slice(0, 10).map((category) => category.name)} />
@@ -53,14 +54,14 @@ export default function HomePage() {
         <section className="rounded-[16px] border border-line bg-card p-6 sm:p-8">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
-              <h2 className="text-[18px] font-medium">Built on open data</h2>
+              <h2 className="text-[18px] font-medium"><T k="home.builtTitle" /></h2>
               <p className="mt-2 max-w-2xl text-[13px] leading-relaxed text-muted">
                 Every record comes from the <a href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 hover:text-lime-text">EbookFoundation/free-programming-books</a> catalog. DevShelf keeps the original link and source file for each book, and never invents descriptions or ratings. Cover images, when enabled, are courtesy of Open Library; otherwise each book gets a locally generated cover.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Link href="/books" className="inline-flex items-center gap-1 rounded-[12px] border border-line px-4 py-2 text-[13px] hover:border-lime">Browse library <ArrowRight className="size-3.5" aria-hidden /></Link>
-              <a href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-[12px] border border-line px-4 py-2 text-[13px] hover:border-lime">Source <Github className="size-3.5" aria-hidden /></a>
+              <Link href="/books" className="inline-flex items-center gap-1 rounded-[12px] border border-line px-4 py-2 text-[13px] hover:border-lime"><T k="home.browse" /> <ArrowRight className="size-3.5" aria-hidden /></Link>
+              <a href={metadata.sourceUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 rounded-[12px] border border-line px-4 py-2 text-[13px] hover:border-lime"><T k="home.source" /> <Github className="size-3.5" aria-hidden /></a>
             </div>
           </div>
         </section>

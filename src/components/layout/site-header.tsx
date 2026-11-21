@@ -7,20 +7,22 @@ import { useState } from "react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useI18n } from "@/lib/i18n";
 import { usePreferences } from "@/providers/preferences-provider";
 import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
 
 const links = [
-  { href: "/books", label: "Library" },
-  { href: "/reading-list", label: "Reading list" },
-  { href: "/settings", label: "Settings" },
+  { href: "/books", key: "nav.library" as const },
+  { href: "/reading-list", key: "nav.readingList" as const },
+  { href: "/settings", key: "nav.settings" as const },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
   const { setSearchOpen } = useUIStore();
   const { effective, update } = usePreferences();
+  const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = effective.theme;
 
@@ -47,7 +49,7 @@ export function SiteHeader() {
                   active ? "bg-background text-ink" : "text-muted",
                 )}
               >
-                {link.label}
+                {t(link.key)}
               </Link>
             );
           })}
@@ -61,7 +63,7 @@ export function SiteHeader() {
             aria-label="Search books"
           >
             <Search className="size-4" aria-hidden />
-            <span>Search</span>
+            <span>{t("nav.search")}</span>
             <kbd className="rounded-md border border-line px-1.5 py-0.5 font-mono text-[10px] text-muted">⌘K</kbd>
           </button>
           <button type="button" onClick={() => setSearchOpen(true)} className="flex size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime sm:hidden" aria-label="Search books">
@@ -75,7 +77,7 @@ export function SiteHeader() {
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="bg-card">
-              <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+              <DropdownMenuLabel>{t("nav.appearance")}</DropdownMenuLabel>
               {(["dark", "light", "sepia"] as const).map((value) => (
                 <DropdownMenuItem key={value} onClick={() => update("theme", value)} className="capitalize">
                   {value}
@@ -97,7 +99,7 @@ export function SiteHeader() {
         <nav className="border-t border-line bg-background px-4 py-3 md:hidden" aria-label="Mobile navigation">
           {links.map((link) => (
             <Link key={link.href} href={link.href} onClick={() => setMobileOpen(false)} className="flex items-center gap-2 rounded-[12px] px-3 py-2.5 text-sm text-muted hover:text-ink">
-              {link.label}
+              {t(link.key)}
             </Link>
           ))}
         </nav>

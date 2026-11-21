@@ -5,6 +5,7 @@ import { Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { exportData, importData } from "@/lib/db/operations";
+import { useI18n } from "@/lib/i18n";
 import { usePreferences } from "@/providers/preferences-provider";
 import type { Preferences } from "@/lib/db/db";
 
@@ -21,6 +22,7 @@ const selectClass = "rounded-[12px] border border-line bg-background px-3 py-2 t
 
 export function SettingsForm() {
   const { effective, update } = usePreferences();
+  const { t } = useI18n();
   const [message, setMessage] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -34,24 +36,29 @@ export function SettingsForm() {
     anchor.download = `devshelf-library-${new Date().toISOString().slice(0, 10)}.json`;
     anchor.click();
     URL.revokeObjectURL(url);
-    setMessage("Library exported as JSON.");
+    setMessage(t("settings.exported"));
   };
 
   const upload = async (file: File | undefined) => {
     if (!file) return;
     try {
       const result = await importData(await file.text());
-      setMessage(`Imported ${result.books} books, ${result.readingList} list entries, ${result.bookmarks} bookmarks.`);
+      setMessage(t("settings.imported").replace("{books}", String(result.books)).replace("{readingList}", String(result.readingList)).replace("{bookmarks}", String(result.bookmarks)));
       window.location.reload();
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Import failed");
+      setMessage(error instanceof Error ? error.message : t("settings.importFailed"));
     }
   };
 
   return (
     <div className="space-y-5">
       <section className="rounded-[16px] border border-line bg-card px-5 pb-2">
-        <h2 className="pt-5 text-[15px] font-medium">Appearance and reading</h2>
+        <h2 className="pt-5 text-[15px] font-medium">{t("settings.appearance")}</h2>
+        <Row label={t("settings.language")} description={t("settings.languageDescription")}>
+          <select value={effective.locale} onChange={(event) => update("locale", event.target.value as Preferences["locale"])} className={selectClass} aria-label={t("settings.language")}>
+            <option value="en">English</option><option value="vi">Tiếng Việt</option>
+          </select>
+        </Row>
         <Row label="Default theme" description="Applied across the application.">
           <select value={effective.theme} onChange={(event) => select("theme", event.target.value)} className={selectClass} aria-label="Default theme">
             <option value="dark">Dark</option><option value="light">Light</option><option value="sepia">Sepia</option>
@@ -82,14 +89,20 @@ export function SettingsForm() {
         <Row label="Load cover images from Open Library" description="When off, covers are generated locally and no third-party image requests are made.">
           <Switch checked={effective.loadCoverImages} onCheckedChange={(checked) => update("loadCoverImages", checked)} aria-label="Load cover images from Open Library" />
         </Row>
+        <Row label={t("settings.offline")} description={t("settings.offlineDescription")}>
+          <Switch checked={effective.offlineMode} onCheckedChange={(checked) => update("offlineMode", checked)} aria-label={t("settings.offline")} />
+        </Row>
+        <Row label={t("settings.stats")} description={t("settings.statsDescription")}>
+          <Switch checked={effective.readingStats} onCheckedChange={(checked) => update("readingStats", checked)} aria-label={t("settings.stats")} />
+        </Row>
       </section>
 
       <section className="rounded-[16px] border border-line bg-card p-5">
-        <h2 className="text-[15px] font-medium">Your data</h2>
-        <p className="mt-2 text-[13px] leading-relaxed text-muted">Export your shelf, progress, bookmarks and preferences as JSON. Importing replaces the existing local data.</p>
+        <h2 className="text-[15px] font-medium">{t("settings.yourData")}</h2>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted">{t("settings.yourDataText")}</p>
         <div className="mt-5 flex flex-wrap gap-2">
-          <Button onClick={() => void download()} className="primary-action rounded-[12px] bg-button-bg text-button-fg hover:border-lime"><Download className="size-4" aria-hidden /> Export JSON</Button>
-          <Button variant="outline" onClick={() => fileRef.current?.click()} className="rounded-[12px] border-line-strong hover:border-lime"><Upload className="size-4" aria-hidden /> Import JSON</Button>
+          <Button onClick={() => void download()} className="primary-action rounded-[12px] bg-button-bg text-button-fg hover:border-lime"><Download className="size-4" aria-hidden /> {t("settings.exportJson")}</Button>
+          <Button variant="outline" onClick={() => fileRef.current?.click()} className="rounded-[12px] border-line-strong hover:border-lime"><Upload className="size-4" aria-hidden /> {t("settings.importJson")}</Button>
           <input ref={fileRef} type="file" accept="application/json,.json" className="hidden" onChange={(event) => void upload(event.target.files?.[0])} aria-label="Import library JSON" />
         </div>
         {message && <p className="mt-4 text-[12px] text-lime-text" role="status">{message}</p>}
