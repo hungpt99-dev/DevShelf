@@ -105,7 +105,7 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Bundled readable books | 3 | `public/data/readable.json` |
 | Unit tests | 8 passing | `npm test` |
 | Static build | exits 0 | `npm run build` (output in `out/`) |
-| HTTP smoke checks | 19/19 | `npm run smoke -- http://127.0.0.1:4173/DevShelf` after `npm start`-style serving |
+| HTTP smoke checks | 19/19 | `npm run smoke` against a local `out/` server |
 
 Counts are derived from the committed catalog snapshot, not typed into the UI. The homepage reads the same files.
 
