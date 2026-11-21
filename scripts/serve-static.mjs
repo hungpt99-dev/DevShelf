@@ -4,6 +4,7 @@ import { extname, join, normalize, resolve } from "node:path";
 
 const root = resolve(process.argv[2] ?? "out");
 const port = Number(process.argv[3] ?? 4173);
+const prefix = process.argv[4] ?? "";
 const types = {
   ".html": "text/html; charset=utf-8", ".json": "application/json", ".js": "text/javascript",
   ".mjs": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml", ".pdf": "application/pdf",
@@ -12,6 +13,7 @@ const types = {
 
 http.createServer((request, response) => {
   let pathname = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
+  if (prefix && (pathname === prefix || pathname.startsWith(`${prefix}/`))) pathname = pathname.slice(prefix.length) || "/";
   if (pathname === "/") pathname = "/index.html";
   let file = join(root, normalize(pathname).replace(/^(\.\.[/\\])+/, ""));
   if (!extname(file)) file += ".html";

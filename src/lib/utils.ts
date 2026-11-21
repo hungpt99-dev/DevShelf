@@ -14,6 +14,12 @@ export function slugify(value: string): string {
     .replace(/^-|-$/g, "");
 }
 
+/** Prefixes paths that are fetched directly from public/ (fetch bypasses Next's basePath). */
+export function publicPath(path: string): string {
+  const base = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+  return `${base}${path}`;
+}
+
 export function formatNumber(value: number): string {
   return new Intl.NumberFormat("en-US").format(value);
 }

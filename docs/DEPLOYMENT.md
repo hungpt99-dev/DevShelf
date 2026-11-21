@@ -9,6 +9,7 @@ DevShelf builds to a plain `out/` directory. No server, environment variables, s
 3. It runs every 6 hours and can be started manually from the Actions tab. The manual `force` input rebuilds and redeploys even if upstream is unchanged.
 4. A run with no upstream change validates the existing dataset but skips commit, build and deployment, so Pages is not redeployed unnecessarily.
 5. A failed run leaves the last known good dataset and the current Pages deployment in place, writes `scripts/reports/sync-error.md` and adds a failure summary to the run.
+6. Project Pages sites are served from `/<repo>/`; the workflow sets `NEXT_PUBLIC_BASE_PATH=/${{ github.event.repository.name }}` for the build so generated links and direct `public/` fetches work under that prefix. Local builds leave it empty and stay at the root.
 
 ```bash
 npm ci

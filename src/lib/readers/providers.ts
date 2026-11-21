@@ -1,6 +1,7 @@
 import GithubSlugger from "github-slugger";
 import remarkParse from "remark-parse";
 import { unified } from "unified";
+import { publicPath } from "@/lib/utils";
 import type { Book, ReaderType } from "@/types/book";
 import type { Chapter, ReaderContent, ReaderProvider } from "./types";
 
@@ -40,7 +41,7 @@ function chaptersFromHtml(html: string): { html: string; chapters: Chapter[] } {
 }
 
 async function fetchText(path: string): Promise<string> {
-  const response = await fetch(path);
+  const response = await fetch(publicPath(path));
   if (!response.ok) throw new Error(`Could not load reading content (${response.status})`);
   return response.text();
 }
@@ -109,7 +110,7 @@ export class PdfReaderProvider implements ReaderProvider {
   }
   getReaderType(): ReaderType { return "pdf"; }
   async loadContent(book: Book, path: string, resource: Resource): Promise<ReaderContent> {
-    const response = await fetch(path, { method: "HEAD" });
+    const response = await fetch(publicPath(path), { method: "HEAD" });
     if (!response.ok) throw new Error(`Could not load PDF (${response.status})`);
     return {
       type: "pdf", title: book.title, chapters: [], pdfUrl: path,

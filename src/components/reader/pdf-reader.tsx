@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { publicPath } from "@/lib/utils";
 import { Loader2, Maximize2, Minus, Plus } from "lucide-react";
 
 interface PdfDocumentLike {
@@ -29,8 +30,8 @@ export default function PdfReader({
   useEffect(() => {
     let cancelled = false;
     import("pdfjs-dist").then(async (pdfjs) => {
-      pdfjs.GlobalWorkerOptions.workerSrc = "/pdf/pdf.worker.min.mjs";
-      const task = pdfjs.getDocument({ url });
+      pdfjs.GlobalWorkerOptions.workerSrc = publicPath("/pdf/pdf.worker.min.mjs");
+      const task = pdfjs.getDocument({ url: publicPath(url) });
       const document = await task.promise;
       if (cancelled) return;
       setPdf(document as unknown as PdfDocumentLike);

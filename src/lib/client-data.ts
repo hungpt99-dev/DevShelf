@@ -1,3 +1,4 @@
+import { publicPath } from "@/lib/utils";
 import type { Book, LibraryMetadata, ReadableRecord, ReadableRecord as Readable } from "@/types/book";
 
 let booksPromise: Promise<Book[]> | null = null;
@@ -5,7 +6,7 @@ let readablePromise: Promise<ReadableRecord[]> | null = null;
 let metadataPromise: Promise<LibraryMetadata> | null = null;
 
 async function getJson<T>(path: string): Promise<T> {
-  const response = await fetch(path);
+  const response = await fetch(publicPath(path));
   if (!response.ok) throw new Error(`Could not load ${path} (${response.status})`);
   return (await response.json()) as T;
 }
