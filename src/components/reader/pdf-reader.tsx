@@ -9,7 +9,7 @@ interface PdfDocumentLike {
   numPages: number;
   getPage: (page: number) => Promise<{
     getViewport: (params: { scale: number }) => { width: number; height: number };
-    render: (params: { canvasContext: CanvasRenderingContext2D; viewport: { width: number; height: number } }) => { cancel: () => void };
+    render: (params: { canvas: HTMLCanvasElement; viewport: { width: number; height: number } }) => { cancel: () => void };
   }>;
 }
 
@@ -48,17 +48,15 @@ export default function PdfReader({
     let renderTask: { cancel: () => void } | null = null;
     pdf.getPage(page).then((pdfPage) => {
       if (cancelled || !canvasRef.current) return;
-      const viewport = pdfPage.getViewport({ scale: zoom });
       const canvas = canvasRef.current;
       const ratio = window.devicePixelRatio || 1;
-      canvas.width = viewport.width * ratio;
-      canvas.height = viewport.height * ratio;
-      canvas.style.width = `${viewport.width}px`;
-      canvas.style.height = `${viewport.height}px`;
-      const context = canvas.getContext("2d");
-      if (!context) return;
-      context.setTransform(ratio, 0, 0, ratio, 0, 0);
-      renderTask = pdfPage.render({ canvasContext: context, viewport });
+      // pdf.js scales the backing store itself; pass `canvas` (v6 requirement), not just a 2D context.
+      const viewport = pdfPage.getViewport({ scale: zoom * ratio });
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      canvas.style.width = `${Math.floor(viewport.width / ratio)}px`;
+      canvas.style.height = `${Math.floor(viewport.height / ratio)}px`;
+      renderTask = pdfPage.render({ canvas, viewport });
     }).catch(() => setError({ url, message: "Could not render this page" }));
     return () => { cancelled = true; renderTask?.cancel(); };
   }, [pdf, page, zoom, url]);
