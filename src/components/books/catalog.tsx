@@ -85,7 +85,7 @@ export function Catalog() {
   return (
     <div className="space-y-6">
       <div className="rounded-lg border border-border bg-card p-4">
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-6">
           <div className="relative lg:col-span-2">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden />
             <Input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search title or author..." className="pl-9" aria-label="Search catalog" />
@@ -98,7 +98,7 @@ export function Catalog() {
             <option value="">All categories</option>
             {categories.map((item) => <option key={item} value={item}>{item}</option>)}
           </select>
-          <div className="grid grid-cols-2 gap-3 md:col-span-2 lg:col-span-1">
+          <div className="grid grid-cols-2 gap-3 md:col-span-2 lg:col-span-2">
             <select value={format} onChange={(event) => setFormat(event.target.value)} className="h-9 rounded-md border border-input bg-background px-3 text-sm" aria-label="Filter by format">
               <option value="">All formats</option>
               {formats.map((item) => <option key={item} value={item}>{item === "unknown" ? "unverified" : item}</option>)}
