@@ -1,6 +1,6 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-21T07:28:27.416Z
+- Generated: 2026-11-21T07:38:28.429Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
 - Upstream commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
 - Previous commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
