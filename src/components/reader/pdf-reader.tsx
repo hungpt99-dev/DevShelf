@@ -1,0 +1,100 @@
+"use client";
+
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2, Maximize2, Minus, Plus } from "lucide-react";
+
+interface PdfDocumentLike {
+  numPages: number;
+  getPage: (page: number) => Promise<{
+    getViewport: (params: { scale: number }) => { width: number; height: number };
+    render: (params: { canvasContext: CanvasRenderingContext2D; viewport: { width: number; height: number } }) => { cancel: () => void };
+  }>;
+}
+
+export default function PdfReader({
+  url, initialPage, onProgress,
+}: {
+  url: string;
+  initialPage: number;
+  onProgress: (page: number, total: number) => void;
+}) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [pdf, setPdf] = useState<PdfDocumentLike | null>(null);
+  const [page, setPage] = useState(Math.max(1, initialPage || 1));
+  const [zoom, setZoom] = useState(1.15);
+  const [error, setError] = useState<{ url: string; message: string } | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    import("pdfjs-dist").then(async (pdfjs) => {
+      pdfjs.GlobalWorkerOptions.workerSrc = "/pdf/pdf.worker.min.mjs";
+      const task = pdfjs.getDocument({ url });
+      const document = await task.promise;
+      if (cancelled) return;
+      setPdf(document as unknown as PdfDocumentLike);
+      setPage((current) => Math.min(Math.max(1, current), document.numPages));
+    }).catch((reason: unknown) => {
+      if (!cancelled) setError({ url, message: reason instanceof Error ? reason.message : "Could not open this PDF" });
+    });
+    return () => { cancelled = true; };
+  }, [url]);
+
+  useEffect(() => {
+    if (!pdf || !canvasRef.current) return;
+    let cancelled = false;
+    let renderTask: { cancel: () => void } | null = null;
+    pdf.getPage(page).then((pdfPage) => {
+      if (cancelled || !canvasRef.current) return;
+      const viewport = pdfPage.getViewport({ scale: zoom });
+      const canvas = canvasRef.current;
+      const ratio = window.devicePixelRatio || 1;
+      canvas.width = viewport.width * ratio;
+      canvas.height = viewport.height * ratio;
+      canvas.style.width = `${viewport.width}px`;
+      canvas.style.height = `${viewport.height}px`;
+      const context = canvas.getContext("2d");
+      if (!context) return;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      renderTask = pdfPage.render({ canvasContext: context, viewport });
+    }).catch(() => setError({ url, message: "Could not render this page" }));
+    return () => { cancelled = true; renderTask?.cancel(); };
+  }, [pdf, page, zoom, url]);
+
+  useEffect(() => {
+    if (pdf) onProgress(page, pdf.numPages);
+  }, [pdf, page, onProgress]);
+
+  const fullscreen = useCallback(() => {
+    const element = containerRef.current;
+    if (!element) return;
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void element.requestFullscreen();
+  }, []);
+
+  if (error?.url === url) {
+    return <div role="alert" className="mx-auto max-w-xl rounded-lg border border-destructive/40 p-6 text-center text-sm text-destructive">PDF error: {error.message}</div>;
+  }
+
+  return (
+    <div ref={containerRef} className="flex min-h-[70vh] flex-col items-center gap-4 bg-[var(--reader-code-bg)] py-6">
+      {!pdf && <div className="flex items-center gap-2 py-20 text-sm text-muted-foreground"><Loader2 className="size-4 animate-spin" aria-hidden /> Loading PDF...</div>}
+      {pdf && (
+        <>
+          <canvas ref={canvasRef} className="max-w-full shadow-sm" aria-label={`PDF page ${page}`} />
+          <div className="sticky bottom-4 flex flex-wrap items-center justify-center gap-2 rounded-lg border border-border bg-background/95 p-2 backdrop-blur">
+            <Button size="icon" variant="ghost" onClick={() => setPage((value) => Math.max(1, value - 1))} disabled={page <= 1} aria-label="Previous page">←</Button>
+            <span className="min-w-28 text-center text-sm tabular-nums">Page {page} / {pdf.numPages}</span>
+            <Button size="icon" variant="ghost" onClick={() => setPage((value) => Math.min(pdf.numPages, value + 1))} disabled={page >= pdf.numPages} aria-label="Next page">→</Button>
+            <span className="mx-1 h-5 w-px bg-border" aria-hidden />
+            <Button size="icon" variant="ghost" onClick={() => setZoom((value) => Math.max(0.6, +(value - 0.15).toFixed(2)))} aria-label="Zoom out"><Minus className="size-4" /></Button>
+            <span className="w-12 text-center text-xs tabular-nums">{Math.round(zoom * 100)}%</span>
+            <Button size="icon" variant="ghost" onClick={() => setZoom((value) => Math.min(2.2, +(value + 0.15).toFixed(2)))} aria-label="Zoom in"><Plus className="size-4" /></Button>
+            <Button size="icon" variant="ghost" onClick={fullscreen} aria-label="Fullscreen PDF"><Maximize2 className="size-4" /></Button>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}

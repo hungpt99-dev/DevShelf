@@ -1,0 +1,7 @@
+node_modules
+.next
+out
+.cache
+*.tsbuildinfo
+.DS_Store
+public/pdf/pdf.worker.min.mjs

@@ -1,0 +1,30 @@
+[
+  {
+    "matchUrl": "https://github.com/SAP/styleguides/blob/master/clean-abap/CleanABAP.md",
+    "downloadUrl": "https://raw.githubusercontent.com/SAP/styleguides/main/clean-abap/CleanABAP.md",
+    "format": "markdown",
+    "file": "clean-abap.md",
+    "assetBase": "https://raw.githubusercontent.com/SAP/styleguides/main/clean-abap/",
+    "license": "CC BY 3.0",
+    "attribution": "SAP SE, Clean ABAP style guide (source repository license: CC BY 3.0)",
+    "note": "Markdown file linked directly from the catalog's Go/ABAP section."
+  },
+  {
+    "matchUrl": "http://autotelicum.github.io/Smooth-CoffeeScript/SmoothCoffeeScript.html",
+    "format": "html",
+    "file": "smooth-coffeescript.html",
+    "assetBase": "http://autotelicum.github.io/Smooth-CoffeeScript/",
+    "license": "CC BY",
+    "attribution": "Kevin Lindsay, Smooth CoffeeScript (license stated in the catalog)",
+    "note": "Single HTML book linked directly from the catalog's CoffeeScript section."
+  },
+  {
+    "matchUrl": "https://www.openmymind.net/assets/go/go.pdf",
+    "format": "pdf",
+    "file": "the-little-go-book.pdf",
+    "assetBase": null,
+    "license": "CC BY-NC-SA",
+    "attribution": "Karl Seguin, The Little Go Book (license stated in the catalog)",
+    "note": "PDF alternate link on the catalog's The Little Go Book entry."
+  }
+]
