@@ -66,9 +66,13 @@ jobs:
       - name: Fetch book covers
         id: covers
         run: |
-          set -euo pipefail
+          set -uo pipefail
           npm run sync:covers -- --limit 200 --delay 1000 | tee .cache/covers.log
-          grep '^CHANGED=' .cache/covers.log >> "$GITHUB_OUTPUT"
+          status=${PIPESTATUS[0]}
+          if [ "$status" -ne 0 ]; then
+            echo "Cover fetch failed; keeping the last known good cover and metadata files." | tee -a .cache/covers.log
+          fi
+          grep '^CHANGED=' .cache/covers.log >> "$GITHUB_OUTPUT" || echo 'CHANGED=false' >> "$GITHUB_OUTPUT"
 
       - name: Validate generated data
         run: npm run validate:data
