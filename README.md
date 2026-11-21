@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
   <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/Tailwind-v4-38bdf8" alt="Tailwind CSS v4">
-  <img src="https://img.shields.io/badge/tests-19%20passing-brightgreen" alt="19 tests passing">
+  <img src="https://img.shields.io/badge/tests-31%20passing-brightgreen" alt="31 tests passing">
   <img src="https://img.shields.io/badge/static-export-orange" alt="Static export">
   <img src="https://img.shields.io/badge/data-CC%20BY%204.0-orange" alt="Data license CC BY 4.0">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
@@ -92,11 +92,11 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Surface | Role | What it adds |
 | --- | --- | --- |
 | Home | Book-cover-first entry point | Sync chip, real or generated covers, catalog stats, deterministic featured shelves |
-| Explore | Full catalog | Search, filters, sort, availability, load-more, honest empty states |
+| Explore | Full catalog | Shareable URL filters, search, sort, availability, license, load-more, honest empty states |
 | Book detail | Provenance | Source file/line, license when stated, alternate links, related books |
 | Reader | Distraction-free reading | TOC, themes, font controls, keyboard nav, copyable code blocks, PDF zoom/pages, saved position |
 | Reading list | Local personal library | Saved / reading / completed, progress, continue reading, remove |
-| Settings | Preferences and data | Theme, font, width, line height, sidebar, cover image opt-out, JSON export/import |
+| Settings | Preferences and data | Theme, font, width, line height, sidebar, language, opt-in toggles, JSON v2 export/import |
 
 ## Measured
 
@@ -105,9 +105,9 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Books from source | 4,735 | `npm run validate:data` |
 | Categories / languages | 498 / 46 | `public/data/metadata.json` |
 | Bundled readable books | 3 | `public/data/readable.json` |
-| Unit tests | 19 passing | `npm test` |
+| Unit tests | 31 passing | `npm test` |
 | Static build | exit code 0; 9,477 static pages | `npm run build` (output in `out/`) |
-| HTTP smoke checks | 21/21 | `npm run smoke` against a local `out/` server |
+| HTTP smoke checks | 23/23 | `npm run smoke` against a local `out/` server |
 | Cover matches in snapshot | 1 | `Object.keys(require("./public/data/covers.json")).length` |
 
 Counts are derived from the committed catalog snapshot, not typed into the UI. The homepage reads the same files.
@@ -142,7 +142,7 @@ Network or parse failures stop before any file is written, so the last known goo
 | --- | --- |
 | **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Deployment](docs/DEPLOYMENT.md) |
 | **Trusting it** | [Data sources & attribution](docs/DATA_SOURCES.md) · [Sync report](scripts/reports/sync-report.md) · [MIT license](LICENSE) |
-| **Building on it** | [Architecture](ARCHITECTURE.md) · [Feature plan](docs/PLAN-features.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
+| **Building on it** | [Architecture](ARCHITECTURE.md) · [Feature plan](docs/PLAN-features.md) · [UI localization](docs/i18n.md) · [URL filters](docs/filters.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
 | **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Cover fetcher](scripts/fetch-covers.ts) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
 
 ## Architecture
@@ -180,6 +180,9 @@ flowchart LR
 | External resources | **Implemented** — detail page links to the original source; never scraped |
 | Progress, bookmarks, preferences, export/import | **Implemented** — Dexie/IndexedDB, no account |
 | Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the last deployed head; current head awaits the next workflow run |
+| URL-driven filters and i18n | **Implemented** — shareable query params, browser-language default, English/Vietnamese UI catalogs |
+| Export/import v2 | **Implemented** — v2 files exported; v1 and v2 both import, with migration tests |
+| Offline/stats toggles | **Declared only** — preferences are stored; the features ship in later phases |
 | Reader display regressions | **Implemented** — theme tokens and fenced-code wrapper fixed; smoke guards TOC and chapter navigation |
 | Real cover images | **Partial** — strict Open Library matching; one match in the committed snapshot, generated covers fill the rest |
 | Cover fallback chain | **Implemented** — real image → generated art → static default SVG; verified on image error, 1×1 responses, empty titles and opt-out |

@@ -44,6 +44,10 @@ The GitHub Actions workflow runs this pipeline every 6 hours and on demand, vali
 
 `selectProvider()` is the only selection point; a book is readable only when `books.json` says `reading.available` and a matching record exists in `readable.json`. External books never enter the reader as "readable".
 
+## Client state and interface language
+
+Catalog filters are encoded in the URL by `src/lib/url-filters.ts` and read with `useSearchParams()`; no server is involved. Interface copy comes from typed catalogs in `src/lib/i18n/`, selected by the `locale` preference. Book data and reader content are never translated.
+
 ## Persistence
 
 Dexie/IndexedDB tables: `books` (local copy of metadata for saved books), `readingProgress`, `readingList`, `bookmarks`, `preferences`. All operations tolerate missing IndexedDB (SSR, privacy modes) by returning empty values. Export writes a versioned JSON document; import replaces local tables inside one transaction. Preferences are mirrored to `localStorage` only for the pre-hydration theme, so there is no flash of the wrong theme.
