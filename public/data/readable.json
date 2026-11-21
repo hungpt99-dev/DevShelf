@@ -8,7 +8,7 @@
     "license": "CC BY 3.0",
     "attribution": "SAP SE, Clean ABAP style guide (source repository license: CC BY 3.0)",
     "assetBase": "https://raw.githubusercontent.com/SAP/styleguides/main/clean-abap/",
-    "downloadedAt": "2026-11-21T08:02:59.885Z"
+    "downloadedAt": "2026-11-21T09:25:46.837Z"
   },
   {
     "bookId": "b-1e82a929fe0f",
@@ -19,7 +19,7 @@
     "license": "CC BY",
     "attribution": "Kevin Lindsay, Smooth CoffeeScript (license stated in the catalog)",
     "assetBase": "http://autotelicum.github.io/Smooth-CoffeeScript/",
-    "downloadedAt": "2026-11-21T08:02:59.885Z"
+    "downloadedAt": "2026-11-21T09:25:46.837Z"
   },
   {
     "bookId": "b-9645f99c21e5",
@@ -30,6 +30,6 @@
     "license": "CC BY-NC-SA",
     "attribution": "Karl Seguin, The Little Go Book (license stated in the catalog)",
     "assetBase": null,
-    "downloadedAt": "2026-11-21T08:02:59.885Z"
+    "downloadedAt": "2026-11-21T09:25:46.837Z"
   }
 ]
