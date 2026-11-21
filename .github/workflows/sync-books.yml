@@ -66,9 +66,10 @@ jobs:
       - name: Fetch book covers
         id: covers
         run: |
-          set -uo pipefail
+          set +e
           npm run sync:covers -- --limit 200 --delay 1000 | tee .cache/covers.log
           status=${PIPESTATUS[0]}
+          set -e
           if [ "$status" -ne 0 ]; then
             echo "Cover fetch failed; keeping the last known good cover and metadata files." | tee -a .cache/covers.log
           fi
