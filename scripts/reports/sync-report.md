@@ -1,9 +1,25 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-21T06:44:36.593Z
+- Generated: 2026-11-21T07:28:27.416Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
-- Commit: 10e33dd516cc53864e6bece7e6bd51f2a035d06c
+- Upstream commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
+- Previous commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
 - License of source catalog: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
+
+## Changes since last sync
+
+- Added: 0
+- Updated: 0
+- Removed: 0
+
+### Added (first entries)
+- none
+
+### Updated (first entries)
+- none
+
+### Removed (first entries)
+- none
 
 ## Counts
 
@@ -82,7 +98,8 @@
 
 ## Method
 
-Catalog Markdown is downloaded as a single GitHub tarball; individual books are never mirrored.
-IDs are SHA-1 prefixes of normalized source URLs. Duplicates are merged by normalized URL, keeping
-all source files, headings, authors, categories and licenses. Formats and licenses are recorded only
-when the source states them or the URL provides direct evidence; all other values stay `unknown`/`null`.
+The upstream commit is detected with `git ls-remote`; the catalog is downloaded as one tarball pinned to that commit.
+Outputs are staged and written only after parsing, diffing and every allowlisted content download succeeds. On failure,
+the last known good dataset stays untouched. IDs are SHA-1 prefixes of normalized source URLs, so unchanged resources
+keep their IDs. Formats and licenses are recorded only when the source states them or the URL provides direct evidence.
+Reading progress, bookmarks and preferences live in the browser's IndexedDB and are never touched by synchronization.
