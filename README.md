@@ -17,7 +17,7 @@
   <img src="https://img.shields.io/badge/Next.js-16-black" alt="Next.js 16">
   <img src="https://img.shields.io/badge/TypeScript-strict-blue" alt="TypeScript strict">
   <img src="https://img.shields.io/badge/Tailwind-v4-38bdf8" alt="Tailwind CSS v4">
-  <img src="https://img.shields.io/badge/tests-31%20passing-brightgreen" alt="31 tests passing">
+  <img src="https://img.shields.io/badge/tests-43%20passing-brightgreen" alt="43 tests passing">
   <img src="https://img.shields.io/badge/static-export-orange" alt="Static export">
   <img src="https://img.shields.io/badge/data-CC%20BY%204.0-orange" alt="Data license CC BY 4.0">
   <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT license">
@@ -95,7 +95,10 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Explore | Full catalog | Shareable URL filters, search, sort, availability, license, load-more, honest empty states |
 | Book detail | Provenance | Source file/line, license when stated, alternate links, related books |
 | Reader | Distraction-free reading | TOC, themes, font controls, keyboard nav, copyable code blocks, PDF zoom/pages, saved position |
-| Reading list | Local personal library | Saved / reading / completed, progress, continue reading, remove |
+| Reading list | Local personal library | Shelves, tags, notes, ratings, dates, filtering/sorting, Markdown/JSON export |
+| Paths | Guided reading | Six curated sequences from real catalog ids with local progress |
+| New and changelog | History view | Weekly additions from sync history, Atom feed and changelog |
+| Shared | Serverless sharing | Read-only compressed hash payload with import to local list |
 | Settings | Preferences and data | Theme, font, width, line height, sidebar, language, opt-in toggles, JSON v2 export/import |
 
 ## Measured
@@ -105,9 +108,9 @@ npm run validate:data # verify indexes, attribution and bundled content
 | Books from source | 4,735 | `npm run validate:data` |
 | Categories / languages | 498 / 46 | `public/data/metadata.json` |
 | Bundled readable books | 3 | `public/data/readable.json` |
-| Unit tests | 31 passing | `npm test` |
+| Unit tests | 43 passing | `npm test` |
 | Static build | exit code 0; 9,477 static pages | `npm run build` (output in `out/`) |
-| HTTP smoke checks | 23/23 | `npm run smoke` against a local `out/` server |
+| HTTP smoke checks | 30/30 | `npm run smoke` against a local `out/` server |
 | Cover matches in snapshot | 1 | `Object.keys(require("./public/data/covers.json")).length` |
 
 Counts are derived from the committed catalog snapshot, not typed into the UI. The homepage reads the same files.
@@ -121,6 +124,8 @@ Counts are derived from the committed catalog snapshot, not typed into the UI. T
 | `next.config.ts` | Static export and optional `NEXT_PUBLIC_BASE_PATH` for project Pages sites | [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) |
 | `public/data/*.json` | Generated catalog, categories, languages, readable map, metadata, sync history and cover URLs | [ARCHITECTURE.md](ARCHITECTURE.md) |
 | `scripts/cache/cover-misses.json` | Cover lookups that found no safe match; retried after 30 days or with `--force` | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) |
+| `data/paths/*.json` | Six curated learning paths with real book ids and schema | [docs/paths.md](docs/paths.md) |
+| `public/data/link-health.json` | Weekly external URL status with consecutive-failure counts | [docs/link-health.md](docs/link-health.md) |
 | `public/images/default-cover.svg` | Static last-resort cover when generation cannot run | [docs/DATA_SOURCES.md](docs/DATA_SOURCES.md) |
 | `docs/assets/` | Product mark and light/dark README banners | [README](#screenshots) |
 
@@ -140,10 +145,10 @@ Network or parse failures stop before any file is written, so the last known goo
 
 | | |
 | --- | --- |
-| **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Deployment](docs/DEPLOYMENT.md) |
+| **Using it** | [Live demo](https://hungpt99-dev.github.io/DevShelf/) · [Reading list](docs/reading-list.md) · [Learning paths](docs/paths.md) · [Sharing](docs/sharing.md) · [Deployment](docs/DEPLOYMENT.md) |
 | **Trusting it** | [Data sources & attribution](docs/DATA_SOURCES.md) · [Sync report](scripts/reports/sync-report.md) · [MIT license](LICENSE) |
 | **Building on it** | [Architecture](ARCHITECTURE.md) · [Feature plan](docs/PLAN-features.md) · [UI localization](docs/i18n.md) · [URL filters](docs/filters.md) · [Parser](scripts/lib/parse-books.ts) · [Reader providers](src/lib/readers/providers.ts) |
-| **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Cover fetcher](scripts/fetch-covers.ts) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
+| **Operating it** | [Sync workflow](.github/workflows/sync-books.yml) · [Link health](docs/link-health.md) · [Cover fetcher](scripts/fetch-covers.ts) · [Validation script](scripts/validate-data.ts) · [Screenshot capture](scripts/capture-screenshots.mjs) |
 
 ## Architecture
 
@@ -179,6 +184,13 @@ flowchart LR
 | PDF reader | **Implemented** — canvas pages, zoom, fullscreen, saved page; no text-selection layer yet |
 | External resources | **Implemented** — detail page links to the original source; never scraped |
 | Progress, bookmarks, preferences, export/import | **Implemented** — Dexie/IndexedDB, no account |
+| Reading list v2 | **Implemented** — Dexie v2 migration, shelves, tags, notes, ratings, dates, filters and exports |
+| Learning paths | **Implemented** — six paths seeded from real ids, schema validated at build time |
+| Serverless sharing | **Implemented** — compressed hash payload, `/shared` preview and local import |
+| Edition grouping | **Implemented** — 149 grouped works in the committed snapshot, readable edition first |
+| Link health | **Implemented** — weekly CI check, two-failure rule, catalog filter and issue link |
+| New page and Atom feed | **Implemented** — weekly history groups, `feed.xml` and changelog page |
+| Contribute buttons | **Implemented** — issue templates and prefilled links from the book page and footer |
 | Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the last deployed head; current head awaits the next workflow run |
 | URL-driven filters and i18n | **Implemented** — shareable query params, browser-language default, English/Vietnamese UI catalogs |
 | Export/import v2 | **Implemented** — v2 files exported; v1 and v2 both import, with migration tests |
@@ -200,6 +212,7 @@ flowchart LR
 - `GITHUB_TOKEN` and Cloudflare credentials exist only inside the Actions runner; nothing token-like ships to `out/`.
 - Synchronization touches only `public/data/` and allowlisted `public/content/`; IndexedDB user data is never modified.
 - Bundled HTML is sanitized with DOMPurify; external links use `rel="noopener noreferrer"`.
+- Share hashes contain only book ids and statuses, never notes or personal data. Link checks run in CI with a repo-identifying User-Agent; the browser never probes external URLs.
 
 ## Development
 

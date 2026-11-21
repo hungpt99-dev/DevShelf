@@ -19,7 +19,10 @@ export function SiteFooter() {
           <ul className="mt-3 space-y-2 text-[13px] text-muted">
             <li><Link className="hover:text-lime-text" href="/books"><T k="footer.allBooks" /></Link></li>
             <li><Link className="hover:text-lime-text" href="/reading-list">Reading list</Link></li>
+            <li><Link className="hover:text-lime-text" href="/paths">Learning paths</Link></li>
+            <li><Link className="hover:text-lime-text" href="/new">New books</Link></li>
             <li><Link className="hover:text-lime-text" href="/settings">Settings</Link></li>
+            <li><a className="hover:text-lime-text" href="https://github.com/hungpt99-dev/DevShelf/issues/new?title=Book%20suggestion&body=Title%3A%0ASource%20URL%3A%0AWhy%20it%20belongs%3A" target="_blank" rel="noopener noreferrer">Suggest a book</a></li>
           </ul>
         </div>
         <div>
