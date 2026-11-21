@@ -19,6 +19,33 @@ npm run build
 
 `npm run build` runs `prebuild`, which copies the pdf.js worker to `public/pdf/pdf.worker.min.mjs`, then performs a strict typecheck-free static Next.js export.
 
+## Cloudflare Pages (automatic, from the sync workflow)
+
+The sync workflow deploys to Cloudflare Pages on every data-changing run when these repository secrets exist:
+
+| Secret | Value | Token permission |
+| --- | --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Cloudflare API token | `Account → Cloudflare Pages → Edit` |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID | — |
+
+Add them in **Repo Settings → Secrets and variables → Actions → New repository secret**. The workflow then:
+
+1. Creates the Pages project `devshelf-hungpt99` if it does not exist (production branch `main`).
+2. Rebuilds without `NEXT_PUBLIC_BASE_PATH` because `*.pages.dev` serves from the site root.
+3. Uploads `out/` with `wrangler pages deploy`.
+
+Expected URL: `https://devshelf-hungpt99.pages.dev` (`devshelf.pages.dev` was already taken). Skip the project-creation step's harmless failure on later runs — it only reports that the project already exists.
+
+Manual deploy from a local clone:
+
+```bash
+npm ci
+npm run build
+npx wrangler pages deploy out --project-name=devshelf-hungpt99 --branch=main
+```
+
+`wrangler` is installed by the GitHub Action; no local install is needed for CI. If you prefer Cloudflare's Git integration instead, set build command `npm run build`, output directory `out`, and leave `NEXT_PUBLIC_BASE_PATH` unset; note that Git integration deploys on every push, not only when catalog data changes.
+
 ## Host examples
 
 - Cloudflare Pages: build command `npm run build`, output directory `out`, Node 20+.

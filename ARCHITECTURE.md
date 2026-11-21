@@ -27,7 +27,7 @@ IDs are `b-` plus the first 12 hex characters of SHA-1 over the normalized URL (
 
 `public/data/sync-history.json` keeps the last 24 runs with added/updated/removed IDs and counts. The homepage reads its latest entry for "New in this sync"; the first entry is marked `initial` because there was no earlier run to diff against.
 
-The GitHub Actions workflow runs this pipeline every 6 hours and on demand, validates data, commits only when the upstream commit changed, and deploys the static export to GitHub Pages. The frontend never calls GitHub or any API at runtime; all tokens stay in the Actions runner.
+The GitHub Actions workflow runs this pipeline every 6 hours and on demand, validates data, commits only when the upstream commit changed, and deploys the static export to GitHub Pages. When Cloudflare secrets are configured, it rebuilds without a base path and also deploys the same dataset to Cloudflare Pages. The frontend never calls GitHub or any API at runtime; all tokens stay in the Actions runner.
 
 ## Reader engine
 

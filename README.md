@@ -125,9 +125,9 @@ The sync workflow runs every 6 hours and on manual dispatch (`force=true` rebuil
 1. `git ls-remote` resolves the upstream `main` SHA and compares it with `metadata.json.commit`.
 2. A tarball pinned to that SHA is parsed; added, updated and removed records are diffed by stable ID.
 3. All indexes and the sync report are regenerated; `npm run validate:data` gates deployment.
-4. Only when something changed are the dataset committed, the site built and GitHub Pages redeployed.
+4. Only when something changed are the dataset committed, the site built and GitHub Pages redeployed. With `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` set as repo secrets, the workflow rebuilds for the site root and also deploys to Cloudflare Pages (`devshelf-hungpt99`).
 
-Network or parse failures stop before any file is written, so the last known good dataset and deployment stay live. The browser never calls GitHub or any API, and no token is present in frontend code — the workflow uses the built-in `GITHUB_TOKEN`.
+Network or parse failures stop before any file is written, so the last known good dataset and deployment stay live. The browser never calls GitHub or any API, and no token is present in frontend code — credentials exist only in the Actions runner. Cloudflare setup details are in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
 ## Documentation
 
