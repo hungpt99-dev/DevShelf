@@ -191,7 +191,7 @@ flowchart LR
 | Link health | **Implemented** — weekly CI check, two-failure rule, catalog filter and issue link |
 | New page and Atom feed | **Implemented** — weekly history groups, `feed.xml` and changelog page |
 | Contribute buttons | **Implemented** — issue templates and prefilled links from the book page and footer |
-| Scheduled sync + conditional GitHub Pages deploy | **Implemented** — Pages live on the last deployed head; current head awaits the next workflow run |
+| Scheduled sync + conditional GitHub Pages deploy | **Implemented** — run `44930835428` built and deployed the Phase 3–4 code to GitHub Pages |
 | URL-driven filters and i18n | **Implemented** — shareable query params, browser-language default, English/Vietnamese UI catalogs |
 | Export/import v3 | **Implemented** — v3 adds highlights and sessions; v1 and v2 still import, with migration tests |
 | Offline mode | **Implemented** — opt-in service worker, bundled-book caching, update notice, clear-offline action |
@@ -234,8 +234,8 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 
 ## Evidence
 
-- GitHub Actions: green sync/deploy run `44887877659` on an earlier head; run `44889512574` deployed the restyled site to GitHub Pages, then failed only at the optional Cloudflare step (token permissions, see Status). The current head `684e0a4` has not had its own workflow run yet.
-- Local static export verified with `npm run build` (exit 0, 9,477 pages) and `npm run smoke` (21/21, including reader TOC and chapter-navigation guards). The live demo serves the last deployed sync; the cover dataset is in the repo and will appear after the next workflow deploy.
+- GitHub Actions: run `44930835428` on head `010f25d` passed sync, validation, 59 tests, typecheck, the static build and GitHub Pages deployment; live `/stats`, `/manifest.webmanifest`, `/sitemap.xml`, `/sw.js` and per-book OG assets all return 200. The optional Cloudflare step still fails with auth code 10000 (token permissions, see Status).
+- Local static export verified with `npm run build` (exit 0, 9,488 pages) and `npm run smoke` (35/35, including reader TOC, chapter navigation, stats, manifest, sitemap, robots and service-worker guards). The live demo serves the current head.
 - Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 - Cover verification: a real Open Library image loads, aborted and 1×1 responses fall back to generated art, an empty title uses the static SVG, and turning the setting off produced zero Open Library requests.
 - Phase 0 verification: fenced code renders inside `<pre>`, duplicate heading ids stay unique, and active TOC contrast measured 18.88:1 with app theme light and reader theme dark.
