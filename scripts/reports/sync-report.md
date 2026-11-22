@@ -1,45 +1,59 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-21T17:35:25.214Z
+- Generated: 2026-11-22T04:37:48.665Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
-- Upstream commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
+- Upstream commit: `5ba11e91facbfc2e5c848715febcda419a841f3e`
 - Previous commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
 - License of source catalog: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Changes since last sync
 
-- Added: 0
-- Updated: 149
-- Removed: 0
+- Added: 14
+- Updated: 2185
+- Removed: 10
 
 ### Added (first entries)
-- none
+- ৫২ টি প্রোগ্রামিং সমস্যা
+- Algorithms for Modern Hardware
+- Breves Notas sobre Análisis de Algoritmos
+- Breves Notas sobre Complejidad
+- Breves Notas sobre Teoría de la Computación
+- Computer Programming «কম্পিউটার প্রোগ্রামিং ১ম খণ্ড»
+- JJ_PYTHON_BOOK
+- Networking with Go, Made Easy
 
 ### Updated (first entries)
+- .NET documentation - Microsoft Docs (source)
+- .NET for Visual FoxPro Developers (source)
 - .NET Framework Notes for Professionals ()
+- .NET Framework Notes for Professionals (source)
+- .NET Performance Testing and Optimization - The Complete Guide (source)
+- "DYNAMIC LINKED LIBRARIES": Paradigms of the GPL license in contemporary software (source)
 - 《The Swift Programming Language》中文版 ()
-- 2 ()
-- ৫২ টি প্রোগ্রামিং সমস্যা ()
-- Android アプリのセキュア設計・セキュアコーディングガイド ()
-- Angular Docs ()
-- Angular Tutorial ()
-- AngularJS最佳实践和风格指南 ()
+- 10 Keys to Great Landing Pages (source)
 
 ### Removed (first entries)
-- none
+- ৫২ টি প্রোগ্রামিং সমস্যা
+- Breves Notas sobre Análisis de Algoritmos
+- Breves Notas sobre Complejidad
+- Breves Notas sobre Teoría de la Computación
+- Computer Programming «কম্পিউটার প্রোগ্রামিং ১ম খণ্ড»
+- Notas de Introducción al Lenguaje de Programación Java (2004)
+- Temas selectos de estructuras de datos
+- مختصر دليل لغات البرمجة
 
 ## Counts
 
 | Metric | Value |
 | --- | ---: |
-| Books | 4735 |
+| Books | 4739 |
 | Categories | 498 |
 | Languages | 46 |
 | Readable | 3 |
 | Source Files | 49 |
 | Duplicates Removed | 65 |
 | Invalid Urls Skipped | 0 |
-| New Since Last Sync | 0 |
+| New Since Last Sync | 14 |
 
 ## Source files
 
@@ -56,7 +70,7 @@
 | `free-programming-books-de.md` | 91 |
 | `free-programming-books-el.md` | 26 |
 | `free-programming-books-en.md` | 0 |
-| `free-programming-books-es.md` | 174 |
+| `free-programming-books-es.md` | 175 |
 | `free-programming-books-et.md` | 15 |
 | `free-programming-books-fa_IR.md` | 28 |
 | `free-programming-books-fi.md` | 27 |
@@ -69,7 +83,7 @@
 | `free-programming-books-it.md` | 95 |
 | `free-programming-books-ja.md` | 294 |
 | `free-programming-books-ko.md` | 80 |
-| `free-programming-books-langs.md` | 1651 |
+| `free-programming-books-langs.md` | 1653 |
 | `free-programming-books-lv.md` | 4 |
 | `free-programming-books-ml.md` | 4 |
 | `free-programming-books-my.md` | 19 |
@@ -83,7 +97,7 @@
 | `free-programming-books-sk.md` | 5 |
 | `free-programming-books-sl.md` | 1 |
 | `free-programming-books-sr.md` | 11 |
-| `free-programming-books-subjects.md` | 850 |
+| `free-programming-books-subjects.md` | 851 |
 | `free-programming-books-sv.md` | 7 |
 | `free-programming-books-ta.md` | 26 |
 | `free-programming-books-te.md` | 5 |

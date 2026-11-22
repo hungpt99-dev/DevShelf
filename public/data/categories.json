@@ -7,7 +7,7 @@
   {
     "name": "Python",
     "slug": "c-008c5436fee2",
-    "count": 390
+    "count": 392
   },
   {
     "name": "Java",
@@ -67,7 +67,7 @@
   {
     "name": "Go",
     "slug": "c-4a196298df86",
-    "count": 65
+    "count": 66
   },
   {
     "name": "0 - 言語非依存",
@@ -105,6 +105,11 @@
     "count": 47
   },
   {
+    "name": "Algorithms & Data Structures",
+    "slug": "c-c557433cddfd",
+    "count": 46
+  },
+  {
     "name": "Git",
     "slug": "c-1dcbf54ff290",
     "count": 46
@@ -118,11 +123,6 @@
     "name": "Perl",
     "slug": "c-37a19d01e88d",
     "count": 46
-  },
-  {
-    "name": "Algorithms & Data Structures",
-    "slug": "c-c557433cddfd",
-    "count": 45
   },
   {
     "name": "LaTeX",
