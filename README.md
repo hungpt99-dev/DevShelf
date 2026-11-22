@@ -234,7 +234,7 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 
 ## Evidence
 
-- GitHub Actions: run `44930835428` on head `010f25d` passed sync, validation, 59 tests, typecheck, the static build and GitHub Pages deployment; live `/stats`, `/manifest.webmanifest`, `/sitemap.xml`, `/sw.js` and per-book OG assets all return 200. The optional Cloudflare step still reports auth code 10000 (token permissions, see Status); after making it non-blocking, the run now ends green with a warning in the job summary.
+- GitHub Actions: run `44997554148` passed sync, validation, 59 tests, typecheck, the static build and GitHub Pages deployment with an overall green conclusion. Live `/stats`, `/manifest.webmanifest`, `/sitemap.xml`, `/sw.js` and per-book OG assets return 200. The optional Cloudflare step still reports auth code 10000 (token permissions, see Status), but it is non-blocking and the job summary explains the skip.
 - Local static export verified with `npm run build` (exit 0, 9,488 pages) and `npm run smoke` (35/35, including reader TOC, chapter navigation, stats, manifest, sitemap, robots and service-worker guards). The live demo serves the current head.
 - Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 - Cover verification: a real Open Library image loads, aborted and 1×1 responses fall back to generated art, an empty title uses the static SVG, and turning the setting off produced zero Open Library requests.
