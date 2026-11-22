@@ -44,7 +44,7 @@ npm run build
 npx wrangler pages deploy out --project-name=devshelf-hungpt99 --branch=main
 ```
 
-If `wrangler` reports `Authentication error [code: 10000]`, the token is missing the two `User → … → Read` permissions above — add them in the Cloudflare dashboard and rerun the workflow with `force=true`.
+If `wrangler` reports `Authentication error [code: 10000]`, the token is missing the two `User → … → Read` permissions above — add them in the Cloudflare dashboard and rerun the workflow with `force=true`. The Cloudflare deploy step is marked `continue-on-error`, so an auth or API failure is reported in the job summary but no longer fails the whole sync, and the GitHub Pages deployment stays live.
 
 `wrangler` is installed by the GitHub Action; no local install is needed for CI. If you prefer Cloudflare's Git integration instead, set build command `npm run build`, output directory `out`, and leave `NEXT_PUBLIC_BASE_PATH` unset; note that Git integration deploys on every push, not only when catalog data changes.
 

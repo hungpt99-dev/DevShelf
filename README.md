@@ -204,7 +204,7 @@ flowchart LR
 | Highlights and notes | **Implemented** — selection highlights with relocation, private notes, jump-to-chapter and Markdown export |
 | Optional gist sync | **Implemented** — opt-in, off by default; only book ids/statuses/timestamps are uploaded to a secret gist; token encrypted locally and excluded from exports |
 | Recently added shelf | **Implemented** — real sync history; honest empty state when a sync adds nothing |
-| Cloudflare Pages deploy | **Partial** — secrets and steps are wired, but the deploy fails with auth code 10000 until the token also has `User → User Details:Read` and `User → Memberships:Read` |
+| Cloudflare Pages deploy | **Partial** — secrets and steps are wired; auth code 10000 persists until the token also has `User → User Details:Read` and `User → Memberships:Read`. The optional step no longer fails the workflow, and the run summary explains the skip |
 | Accounts, cloud sync, runtime scraping | **Not implemented by design** — no backend and no site access bypass; the optional gist sync is user-initiated and off by default |
 
 ## Security and privacy
@@ -234,7 +234,7 @@ npm start            # or: node scripts/serve-static.mjs out 4173 /DevShelf
 
 ## Evidence
 
-- GitHub Actions: run `44930835428` on head `010f25d` passed sync, validation, 59 tests, typecheck, the static build and GitHub Pages deployment; live `/stats`, `/manifest.webmanifest`, `/sitemap.xml`, `/sw.js` and per-book OG assets all return 200. The optional Cloudflare step still fails with auth code 10000 (token permissions, see Status).
+- GitHub Actions: run `44930835428` on head `010f25d` passed sync, validation, 59 tests, typecheck, the static build and GitHub Pages deployment; live `/stats`, `/manifest.webmanifest`, `/sitemap.xml`, `/sw.js` and per-book OG assets all return 200. The optional Cloudflare step still reports auth code 10000 (token permissions, see Status); after making it non-blocking, the run now ends green with a warning in the job summary.
 - Local static export verified with `npm run build` (exit 0, 9,488 pages) and `npm run smoke` (35/35, including reader TOC, chapter navigation, stats, manifest, sitemap, robots and service-worker guards). The live demo serves the current head.
 - Browser verification: 4,735 resources load; Markdown, HTML and PDF readers render; progress survives reload; settings export/import round-trips; light/dark themes and the 375/768/1280 layouts were reviewed.
 - Cover verification: a real Open Library image loads, aborted and 1×1 responses fall back to generated art, an empty title uses the static SVG, and turning the setting off produced zero Open Library requests.

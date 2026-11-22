@@ -145,6 +145,7 @@ jobs:
       - name: Deploy to Cloudflare Pages
         id: cloudflare_deploy
         if: (steps.check.outputs.CHANGED == 'true' || steps.covers.outputs.CHANGED == 'true') && steps.cloudflare.outputs.enabled == 'true'
+        continue-on-error: true
         uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -155,6 +156,16 @@ jobs:
         if: steps.cloudflare_deploy.outputs.deployment-url != ''
         run: |
           echo "Cloudflare Pages: ${{ steps.cloudflare_deploy.outputs.deployment-url }}" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Cloudflare deploy warning
+        if: always() && steps.cloudflare.outputs.enabled == 'true' && steps.cloudflare_deploy.outcome == 'failure'
+        run: |
+          {
+            echo "### Cloudflare deploy did not complete"
+            echo ""
+            echo "The optional Cloudflare Pages step failed. GitHub Pages deployment is unaffected and the committed dataset is valid."
+            echo "Fix the Cloudflare API token permissions (User → User Details:Read and User → Memberships:Read, in addition to Pages:Edit), then dispatch this workflow with force=true."
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Success summary
         if: success() && steps.check.outputs.CHANGED == 'false'
