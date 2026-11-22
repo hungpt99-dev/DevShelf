@@ -1,46 +1,32 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-22T04:37:48.665Z
+- Generated: 2026-11-22T07:17:52.279Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
 - Upstream commit: `5ba11e91facbfc2e5c848715febcda419a841f3e`
-- Previous commit: `10e33dd516cc53864e6bece7e6bd51f2a035d06c`
+- Previous commit: `5ba11e91facbfc2e5c848715febcda419a841f3e`
 - License of source catalog: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Changes since last sync
 
-- Added: 14
-- Updated: 2185
-- Removed: 10
+- Added: 0
+- Updated: 149
+- Removed: 0
 
 ### Added (first entries)
-- ৫২ টি প্রোগ্রামিং সমস্যা
-- Algorithms for Modern Hardware
-- Breves Notas sobre Análisis de Algoritmos
-- Breves Notas sobre Complejidad
-- Breves Notas sobre Teoría de la Computación
-- Computer Programming «কম্পিউটার প্রোগ্রামিং ১ম খণ্ড»
-- JJ_PYTHON_BOOK
-- Networking with Go, Made Easy
+- none
 
 ### Updated (first entries)
-- .NET documentation - Microsoft Docs (source)
-- .NET for Visual FoxPro Developers (source)
 - .NET Framework Notes for Professionals ()
-- .NET Framework Notes for Professionals (source)
-- .NET Performance Testing and Optimization - The Complete Guide (source)
-- "DYNAMIC LINKED LIBRARIES": Paradigms of the GPL license in contemporary software (source)
 - 《The Swift Programming Language》中文版 ()
-- 10 Keys to Great Landing Pages (source)
+- 2 ()
+- ৫২ টি প্রোগ্রামিং সমস্যা ()
+- Android アプリのセキュア設計・セキュアコーディングガイド ()
+- Angular Docs ()
+- Angular Tutorial ()
+- AngularJS最佳实践和风格指南 ()
 
 ### Removed (first entries)
-- ৫২ টি প্রোগ্রামিং সমস্যা
-- Breves Notas sobre Análisis de Algoritmos
-- Breves Notas sobre Complejidad
-- Breves Notas sobre Teoría de la Computación
-- Computer Programming «কম্পিউটার প্রোগ্রামিং ১ম খণ্ড»
-- Notas de Introducción al Lenguaje de Programación Java (2004)
-- Temas selectos de estructuras de datos
-- مختصر دليل لغات البرمجة
+- none
 
 ## Counts
 
@@ -53,7 +39,7 @@
 | Source Files | 49 |
 | Duplicates Removed | 65 |
 | Invalid Urls Skipped | 0 |
-| New Since Last Sync | 14 |
+| New Since Last Sync | 0 |
 
 ## Source files
 
