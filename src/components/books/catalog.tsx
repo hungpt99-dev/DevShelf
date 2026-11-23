@@ -12,7 +12,7 @@ import { fetchBooks, fetchLanguages, fetchLinkHealth, fetchMetadata } from "@/li
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useI18n } from "@/lib/i18n";
 import { buildSearchIndex, searchBooks } from "@/lib/search";
-import { browserLanguageName, buildFilterSearch, defaultFilters, parseFilters, type FilterState } from "@/lib/url-filters";
+import { browserLanguageName, buildFilterSearch, clampPage, defaultFilters, parseFilters, type FilterState } from "@/lib/url-filters";
 import type { Book, LanguageRecord, LibraryMetadata } from "@/types/book";
 import type { LinkHealth } from "../../../scripts/lib/link-health";
 
@@ -35,8 +35,10 @@ export function Catalog() {
     () => browserLanguageName(languageRecords, typeof navigator === "undefined" ? "en-US" : navigator.language) ?? "",
     [languageRecords],
   );
-  const filters = useMemo(() => parseFilters(search, defaultLanguage), [search, defaultLanguage]);
-  const debounced = useDebouncedValue(filters.q, 220);
+  const rawFilters = useMemo(() => parseFilters(search, defaultLanguage), [search, defaultLanguage]);
+  // The URL is trimmed at its edges; the visible input keeps exactly what the user typed.
+  const [searchInput, setSearchInput] = useState(rawFilters.q);
+  const debounced = useDebouncedValue(rawFilters.q, 220);
 
   useEffect(() => {
     let active = true;
@@ -54,10 +56,14 @@ export function Catalog() {
   }, []);
 
   useEffect(() => {
-    const onPop = () => setOverride(window.location.search.replace(/^\?/, ""));
+    const onPop = () => {
+      const next = window.location.search.replace(/^\?/, "");
+      setOverride(next);
+      setSearchInput(parseFilters(next, defaultLanguage).q);
+    };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, []);
+  }, [defaultLanguage]);
 
   const writeSearch = (next: FilterState, push = true) => {
     const query = buildFilterSearch(next, defaultLanguage);
@@ -83,21 +89,33 @@ export function Catalog() {
       ? searchBooks(debounced, 5000).map((result) => result.item)
       : (books ?? []);
     const result = source.filter((book) => {
-      if (filters.language && book.language !== filters.language) return false;
-      if (filters.category && !book.categories.includes(filters.category)) return false;
-      if (filters.format && book.format !== filters.format) return false;
-      if (filters.availability === "readable" && !book.reading.available) return false;
-      if (filters.availability === "external" && book.reading.available) return false;
-      if (filters.license && book.license !== filters.license) return false;
+      if (rawFilters.language && book.language !== rawFilters.language) return false;
+      if (rawFilters.category && !book.categories.includes(rawFilters.category)) return false;
+      if (rawFilters.format && book.format !== rawFilters.format) return false;
+      if (rawFilters.availability === "readable" && !book.reading.available) return false;
+      if (rawFilters.availability === "external" && book.reading.available) return false;
+      if (rawFilters.license && book.license !== rawFilters.license) return false;
       if (hideUnavailable && linkHealth[book.url]?.status === "broken") return false;
       return true;
     });
     return result.sort((a, b) =>
-      filters.sort === "title"
+      rawFilters.sort === "title"
         ? a.title.localeCompare(b.title)
         : b.firstSeenAt.localeCompare(a.firstSeenAt) || a.title.localeCompare(b.title),
     );
-  }, [books, debounced, filters.language, filters.category, filters.format, filters.availability, filters.license, filters.sort, hideUnavailable, linkHealth]);
+  }, [books, debounced, rawFilters.language, rawFilters.category, rawFilters.format, rawFilters.availability, rawFilters.license, rawFilters.sort, hideUnavailable, linkHealth]);
+
+  const effectivePage = clampPage(rawFilters.page, filtered.length, PAGE_SIZE);
+  const normalizedSearch = books && effectivePage !== rawFilters.page
+    ? buildFilterSearch({ ...rawFilters, page: effectivePage }, defaultLanguage)
+    : search;
+  const filters = parseFilters(normalizedSearch, defaultLanguage);
+  const visibleCount = effectivePage * PAGE_SIZE;
+
+  useEffect(() => {
+    if (normalizedSearch === search) return;
+    window.history.replaceState(null, "", `${window.location.pathname}?${normalizedSearch}`);
+  }, [normalizedSearch, search]);
 
   const activeFilters = [
     filters.language && { label: filters.language, clear: () => setFilter("language", "") },
@@ -107,8 +125,10 @@ export function Catalog() {
     filters.license && { label: filters.license, clear: () => setFilter("license", "") },
   ].filter(Boolean) as { label: string; clear: () => void }[];
 
-  const clearAll = () => writeSearch(defaultFilters(defaultLanguage));
-  const visibleCount = filters.page * PAGE_SIZE;
+  const clearAll = () => {
+    setSearchInput("");
+    writeSearch(defaultFilters(defaultLanguage));
+  };
 
   return (
     <div className="space-y-6">
@@ -117,8 +137,11 @@ export function Catalog() {
           <div className="relative min-w-[180px] flex-1">
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted" aria-hidden />
             <Input
-              value={filters.q}
-              onChange={(event) => setFilter("q", event.target.value, false)}
+              value={searchInput}
+              onChange={(event) => {
+                setSearchInput(event.target.value);
+                writeSearch({ ...filters, q: event.target.value, page: 1 }, false);
+              }}
               placeholder={t("catalog.searchPlaceholder")}
               className="h-9 rounded-[12px] border-line bg-card pl-9 text-[13px] focus:border-lime"
               aria-label={t("catalog.searchPlaceholder")}
@@ -198,7 +221,7 @@ export function Catalog() {
           <BookGrid books={filtered.slice(0, visibleCount)} />
           {visibleCount < filtered.length && (
             <div className="flex justify-center pt-4">
-              <Button variant="outline" className="rounded-[12px]" onClick={() => writeSearch({ ...filters, page: filters.page + 1 })}>
+              <Button variant="outline" className="rounded-[12px]" onClick={() => writeSearch({ ...filters, page: effectivePage + 1 })}>
                 <ArrowDown className="size-4" aria-hidden /> {t("catalog.loadMore").replace("{count}", (filtered.length - visibleCount).toLocaleString())}
               </Button>
             </div>

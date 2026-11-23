@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { browserLanguageName, buildFilterSearch, defaultFilters, parseFilters, type FilterState } from "../../src/lib/url-filters";
+import { browserLanguageName, buildFilterSearch, clampPage, defaultFilters, parseFilters, type FilterState } from "../../src/lib/url-filters";
 
 const languages = [{ code: "langs", name: "English" }, { code: "vi", name: "Vietnamese" }];
 
@@ -38,3 +38,20 @@ test("filter page values are always positive integers", () => {
   const state: FilterState = { ...defaultFilters("English"), page: 4 };
   assert.equal(buildFilterSearch(state, "English"), "page=4");
 });
+
+test("buildFilterSearch keeps internal spaces in the query and trims only the edges", () => {
+  const defaults = defaultFilters("English");
+  assert.equal(buildFilterSearch({ ...defaults, q: "web design" }, "English"), "q=web+design");
+  assert.equal(buildFilterSearch({ ...defaults, q: "  web  design  " }, "English"), "q=web++design");
+  assert.equal(parseFilters("?q=web+design", "English").q, "web design");
+});
+
+test("clampPage keeps out-of-range pages within the available result set", () => {
+  assert.equal(clampPage(999, 0, 20), 1);
+  assert.equal(clampPage(999, 20, 20), 1);
+  assert.equal(clampPage(999, 21, 20), 2);
+  assert.equal(clampPage(999, 4739, 20), 237);
+  assert.equal(clampPage(2, 4739, 20), 2);
+  assert.equal(clampPage(0, 4739, 20), 1);
+});
+

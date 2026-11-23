@@ -33,6 +33,12 @@ export function parseFilters(search: string, defaultLanguage = ""): FilterState 
   };
 }
 
+export function clampPage(page: number, total: number, pageSize: number): number {
+  if (!Number.isFinite(page) || page < 1) return 1;
+  const maxPage = Math.max(1, Math.ceil(total / pageSize));
+  return Math.min(Math.trunc(page), maxPage);
+}
+
 export function buildFilterSearch(filters: FilterState, defaultLanguage = ""): string {
   const params = new URLSearchParams();
   const q = filters.q.trim();
