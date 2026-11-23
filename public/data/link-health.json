@@ -2,31 +2,241 @@
   "http://3monkeys.github.io/play.rules/": {
     "status": "ok",
     "httpStatus": 200,
-    "checkedAt": "2026-11-21T16:41:49.973Z",
+    "checkedAt": "2026-11-23T11:34:35.636Z",
+    "consecutiveFailures": 0
+  },
+  "http://97cosas.com/programador/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:37.643Z",
+    "consecutiveFailures": 0
+  },
+  "http://abstract.ups.edu": {
+    "status": "unknown",
+    "httpStatus": null,
+    "checkedAt": "2026-11-23T11:34:44.087Z",
+    "consecutiveFailures": 1
+  },
+  "http://achmatim.net/2009/04/15/buku-gratis-pemrograman-web-dengan-php-dan-mysql/": {
+    "status": "unknown",
+    "httpStatus": 404,
+    "checkedAt": "2026-11-23T11:34:57.856Z",
+    "consecutiveFailures": 1
+  },
+  "http://acl.readthedocs.org/en/latest/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:58.619Z",
+    "consecutiveFailures": 0
+  },
+  "http://adam.chlipala.net/cpdt/html/toc.html": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:00.343Z",
+    "consecutiveFailures": 0
+  },
+  "http://adaptivewebdesign.info/1st-edition/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:01.839Z",
+    "consecutiveFailures": 0
+  },
+  "http://addyosmani.com/largescalejavascript/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:02.541Z",
+    "consecutiveFailures": 0
+  },
+  "http://addyosmani.com/resources/essentialjsdesignpatterns/book/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:03.480Z",
+    "consecutiveFailures": 0
+  },
+  "http://addyosmani.github.io/backbone-fundamentals/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:04.230Z",
+    "consecutiveFailures": 0
+  },
+  "http://ade.web.elte.hu/wabp/index.html": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:06.849Z",
+    "consecutiveFailures": 0
+  },
+  "http://adv-r.had.co.nz": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:08.021Z",
+    "consecutiveFailures": 0
+  },
+  "http://agiliq.com/books/djenofdjango/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:08.974Z",
     "consecutiveFailures": 0
   },
   "https://0xax.gitbooks.io/linux-insides/content/index.html": {
-    "status": "ok",
-    "httpStatus": 200,
-    "checkedAt": "2026-11-21T16:41:48.920Z",
-    "consecutiveFailures": 0
+    "status": "unknown",
+    "httpStatus": 401,
+    "checkedAt": "2026-11-23T11:34:34.193Z",
+    "consecutiveFailures": 1
   },
   "https://10print.org": {
     "status": "ok",
     "httpStatus": 200,
-    "checkedAt": "2026-11-21T16:41:49.622Z",
+    "checkedAt": "2026-11-23T11:34:35.023Z",
     "consecutiveFailures": 0
   },
   "https://4programmers.net/C_sharp": {
-    "status": "unknown",
+    "status": "broken",
     "httpStatus": 403,
-    "checkedAt": "2026-11-21T16:41:50.231Z",
-    "consecutiveFailures": 1
+    "checkedAt": "2026-11-23T11:34:36.205Z",
+    "consecutiveFailures": 2
   },
   "https://8th713.github.io/LearnAngularJS": {
     "status": "redirected",
     "httpStatus": 200,
-    "checkedAt": "2026-11-21T16:41:50.728Z",
+    "checkedAt": "2026-11-23T11:34:36.928Z",
+    "consecutiveFailures": 0
+  },
+  "https://9cguide.appspot.com": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:38.268Z",
+    "consecutiveFailures": 0
+  },
+  "https://aaaaaashu.gitbooks.io/mac-dev-setup/content/": {
+    "status": "unknown",
+    "httpStatus": 401,
+    "checkedAt": "2026-11-23T11:34:39.045Z",
+    "consecutiveFailures": 1
+  },
+  "https://aaltodoc.aalto.fi/handle/123456789/6318": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:40.723Z",
+    "consecutiveFailures": 0
+  },
+  "https://about.gitlab.com/handbook/": {
+    "status": "redirected",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:41.509Z",
+    "consecutiveFailures": 0
+  },
+  "https://abs.traduc.org/abs-fr/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:42.610Z",
+    "consecutiveFailures": 0
+  },
+  "https://abseil.io/resources/swe-book": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:43.535Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/10-دليل-إدارة-خواديم-أوبنتو/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:45.119Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/13-نحو-فهم-أعمق-لتقنيات-html5/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:46.094Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/14-التحريك-عبر-css/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:47.053Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/15-البرمجة-بلغة-بايثون/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:48.026Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/16-%D9%85%D9%84%D8%A7%D8%AD%D8%B8%D8%A7%D8%AA-%D9%84%D9%84%D8%B9%D8%A7%D9%85%D9%84%D9%8A%D9%86-%D8%A8%D9%84%D8%BA%D8%A9-sql/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:48.987Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/17-%D9%85%D8%AF%D8%AE%D9%84-%D8%A5%D9%84%D9%89-%D8%A7%D9%84%D8%B0%D9%83%D8%A7%D8%A1-%D8%A7%D9%84%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A-%D9%88%D8%AA%D8%B9%D9%84%D9%85-%D8%A7%D9%84%D8%A2%D9%84%D8%A9/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:49.965Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/18-%D8%A7%D9%84%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D9%84%D8%B9%D9%85%D9%84%D9%8A-%D8%A5%D9%84%D9%89-%D9%82%D9%88%D8%A7%D8%B9%D8%AF-%D8%A8%D9%8A%D8%A7%D9%86%D8%A7%D8%AA-postgresql/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:50.931Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/20-%D8%AF%D9%84%D9%8A%D9%84-%D8%A7%D9%84%D8%A3%D9%85%D8%A7%D9%86-%D8%A7%D9%84%D8%B1%D9%82%D9%85%D9%8A/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:51.912Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/22-أساسيات-إطار-العمل-vuejs/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:52.868Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/24-أنظمة-التشغيل-للمبرمجين/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:53.821Z",
+    "consecutiveFailures": 0
+  },
+  "https://academy.hsoub.com/files/26-تصميم-قواعد-البيانات/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:54.778Z",
+    "consecutiveFailures": 0
+  },
+  "https://accelerated.amimetic.co.uk": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:55.658Z",
+    "consecutiveFailures": 0
+  },
+  "https://acuity.press": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:34:59.502Z",
+    "consecutiveFailures": 0
+  },
+  "https://adamschwartz.co/magic-of-css/": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:01.034Z",
+    "consecutiveFailures": 0
+  },
+  "https://adityacse.weebly.com/uploads/2/4/0/7/24078687/data-structures.pdf": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:07.453Z",
+    "consecutiveFailures": 0
+  },
+  "https://ahkscript.github.io/ahkbook/index.html": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:09.601Z",
+    "consecutiveFailures": 0
+  },
+  "https://ai.stanford.edu/~nilsson/QAI/qai.pdf": {
+    "status": "ok",
+    "httpStatus": 200,
+    "checkedAt": "2026-11-23T11:35:10.193Z",
     "consecutiveFailures": 0
   }
 }
