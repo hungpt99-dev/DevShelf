@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { browserLanguageName, buildFilterSearch, clampPage, defaultFilters, parseFilters, type FilterState } from "../../src/lib/url-filters";
+import { browserLanguageName, buildFilterSearch, clampPage, defaultFilters, pageSlice, parseFilters, type FilterState } from "../../src/lib/url-filters";
 
 const languages = [{ code: "langs", name: "English" }, { code: "vi", name: "Vietnamese" }];
 
@@ -53,5 +53,32 @@ test("clampPage keeps out-of-range pages within the available result set", () =>
   assert.equal(clampPage(999, 4739, 20), 237);
   assert.equal(clampPage(2, 4739, 20), 2);
   assert.equal(clampPage(0, 4739, 20), 1);
+});
+
+test("pageSlice renders one page (not the whole catalog) when the total is not a multiple of PAGE_SIZE (DS-03/R-01)", () => {
+  const cards = (page: number, total: number, size = 20) => {
+    const { start, end } = pageSlice(clampPage(page, total, size), total, size);
+    return Array.from({ length: total }, (_, i) => i).slice(start, end);
+  };
+
+  // QA repro: 2,470 results, page=999 clamps to 124. A cumulative 124 * 20
+  // slice would render all 2,470 books; the last page holds only 10.
+  assert.equal(cards(999, 2470).length, 10);
+  assert.deepEqual(cards(999, 2470), Array.from({ length: 10 }, (_, i) => 2460 + i));
+  assert.equal(cards(1, 2470).length, 20);
+  assert.equal(cards(2, 2470).length, 20);
+
+  // Smaller non-multiple total: 45 books -> last page has 5, page 2 has 20
+  // and still leaves 5 for load-more.
+  assert.equal(cards(999, 45).length, 5);
+  assert.deepEqual(cards(999, 45), [40, 41, 42, 43, 44]);
+  assert.equal(cards(2, 45).length, 20);
+  assert.equal(45 - pageSlice(2, 45, 20).end, 5); // load-more count
+  assert.deepEqual(pageSlice(1, 0, 20), { start: 0, end: 0 }); // empty state
+
+  // Exact multiples are unchanged: page 2 of 40 renders 20, last page renders 20.
+  assert.equal(cards(999, 40).length, 20);
+  assert.equal(cards(1, 40).length, 20);
+  assert.equal(40 - pageSlice(2, 40, 20).end, 0); // no load-more on last page
 });
 

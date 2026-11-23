@@ -39,6 +39,22 @@ export function clampPage(page: number, total: number, pageSize: number): number
   return Math.min(Math.trunc(page), maxPage);
 }
 
+/**
+ * Inclusive-exclusive slice bounds for one catalog page. Clamping the page to
+ * the last valid page is not enough on its own: 124 * 20 = 2,480 overshoots a
+ * 2,470-book result set, so a cumulative slice would render the whole catalog.
+ * Page N shows only books (N-1)*PAGE_SIZE .. N*PAGE_SIZE, capped at the total.
+ */
+export interface PageSlice {
+  start: number;
+  end: number;
+}
+
+export function pageSlice(page: number, total: number, pageSize: number): PageSlice {
+  const start = Math.max(0, (page - 1) * pageSize);
+  return { start, end: Math.min(total, start + pageSize) };
+}
+
 export function buildFilterSearch(filters: FilterState, defaultLanguage = ""): string {
   const params = new URLSearchParams();
   const q = filters.q.trim();

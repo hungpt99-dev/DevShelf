@@ -12,7 +12,7 @@ import { fetchBooks, fetchLanguages, fetchLinkHealth, fetchMetadata } from "@/li
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useI18n } from "@/lib/i18n";
 import { buildSearchIndex, searchBooks } from "@/lib/search";
-import { browserLanguageName, buildFilterSearch, clampPage, defaultFilters, parseFilters, type FilterState } from "@/lib/url-filters";
+import { browserLanguageName, buildFilterSearch, clampPage, defaultFilters, pageSlice, parseFilters, type FilterState } from "@/lib/url-filters";
 import type { Book, LanguageRecord, LibraryMetadata } from "@/types/book";
 import type { LinkHealth } from "../../../scripts/lib/link-health";
 
@@ -110,7 +110,7 @@ export function Catalog() {
     ? buildFilterSearch({ ...rawFilters, page: effectivePage }, defaultLanguage)
     : search;
   const filters = parseFilters(normalizedSearch, defaultLanguage);
-  const visibleCount = effectivePage * PAGE_SIZE;
+  const { start: visibleStart, end: visibleCount } = pageSlice(effectivePage, filtered.length, PAGE_SIZE);
 
   useEffect(() => {
     if (normalizedSearch === search) return;
@@ -218,7 +218,7 @@ export function Catalog() {
       )}
       {books && filtered.length > 0 && (
         <>
-          <BookGrid books={filtered.slice(0, visibleCount)} />
+          <BookGrid books={filtered.slice(visibleStart, visibleCount)} />
           {visibleCount < filtered.length && (
             <div className="flex justify-center pt-4">
               <Button variant="outline" className="rounded-[12px]" onClick={() => writeSearch({ ...filters, page: effectivePage + 1 })}>
