@@ -3,11 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Check, Github, Library, Menu, Moon, Search, Sun, X } from "lucide-react";
-import { useState } from "react";
+import { useSyncExternalStore, useState } from "react";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useI18n } from "@/lib/i18n";
+import { getApplePlatformServerSnapshot, getApplePlatformSnapshot, shortcutHint, subscribePlatform } from "@/lib/platform";
 import { usePreferences } from "@/providers/preferences-provider";
 import { useUIStore } from "@/stores/ui-store";
 import { cn } from "@/lib/utils";
@@ -25,6 +26,7 @@ export function SiteHeader() {
   const { t } = useI18n();
   const [mobileOpen, setMobileOpen] = useState(false);
   const theme = effective.theme;
+  const apple = useSyncExternalStore(subscribePlatform, getApplePlatformSnapshot, getApplePlatformServerSnapshot);
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-background/80 backdrop-blur-xl">
@@ -64,7 +66,7 @@ export function SiteHeader() {
           >
             <Search className="size-4" aria-hidden />
             <span>{t("nav.search")}</span>
-            <kbd className="rounded-md border border-line px-1.5 py-0.5 font-mono text-[10px] text-muted">⌘K</kbd>
+            <kbd className="rounded-md border border-line px-1.5 py-0.5 font-mono text-[10px] text-muted">{shortcutHint(apple)}</kbd>
           </button>
           <button type="button" onClick={() => setSearchOpen(true)} className="flex size-9 items-center justify-center rounded-[12px] border border-line hover:border-lime sm:hidden" aria-label="Search books">
             <Search className="size-4" aria-hidden />

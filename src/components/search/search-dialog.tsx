@@ -8,6 +8,7 @@ import { Highlight } from "@/components/search/highlight";
 import { fetchBooks } from "@/lib/client-data";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { buildSearchIndex, searchBooks } from "@/lib/search";
+import { isEditableTarget } from "@/lib/keyboard";
 import { useUIStore } from "@/stores/ui-store";
 import type { Book } from "@/types/book";
 
@@ -24,11 +25,19 @@ export function SearchDialog() {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
         event.preventDefault();
         setSearchOpen(true);
+        return;
+      }
+      if (
+        event.key === "/" && !event.metaKey && !event.ctrlKey && !event.altKey
+        && !searchOpen && !isEditableTarget(event.target as HTMLElement | null)
+      ) {
+        event.preventDefault();
+        setSearchOpen(true);
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [setSearchOpen]);
+  }, [searchOpen, setSearchOpen]);
 
   useEffect(() => {
     if (!searchOpen) return;
