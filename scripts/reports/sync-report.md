@@ -1,45 +1,49 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-23T07:51:15.225Z
+- Generated: 2026-11-24T03:42:59.631Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
-- Upstream commit: `5ba11e91facbfc2e5c848715febcda419a841f3e`
+- Upstream commit: `568ce843220bc898456a0f5e793db93bd8c24de6`
 - Previous commit: `5ba11e91facbfc2e5c848715febcda419a841f3e`
 - License of source catalog: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Changes since last sync
 
-- Added: 0
-- Updated: 149
-- Removed: 0
+- Added: 4
+- Updated: 939
+- Removed: 2
 
 ### Added (first entries)
-- none
+- 10 Keys to Great Landing Pages
+- Linux, DevOps and SRE
+- PHP Basics: Free Beginner Course With a Blog Project
+- Raspberry Pi Beginner's Guide 4th Edition
 
 ### Updated (first entries)
+- .NET documentation - Microsoft Docs (source)
+- .NET for Visual FoxPro Developers (source)
 - .NET Framework Notes for Professionals ()
+- .NET Framework Notes for Professionals (source)
+- .NET Performance Testing and Optimization - The Complete Guide (source)
 - 《The Swift Programming Language》中文版 ()
-- 2 ()
-- ৫২ টি প্রোগ্রামিং সমস্যা ()
-- Android アプリのセキュア設計・セキュアコーディングガイド ()
-- Angular Docs ()
-- Angular Tutorial ()
-- AngularJS最佳实践和风格指南 ()
+- 100 (and counting) Laravel Quick Tips (source)
+- 100 Page Python Intro (source)
 
 ### Removed (first entries)
-- none
+- 10 Keys to Great Landing Pages
+- Raspberry Pi Beginner's Guide 4th Edition
 
 ## Counts
 
 | Metric | Value |
 | --- | ---: |
-| Books | 4739 |
+| Books | 4741 |
 | Categories | 498 |
 | Languages | 46 |
 | Readable | 3 |
 | Source Files | 49 |
 | Duplicates Removed | 65 |
 | Invalid Urls Skipped | 0 |
-| New Since Last Sync | 0 |
+| New Since Last Sync | 4 |
 
 ## Source files
 
@@ -69,7 +73,7 @@
 | `free-programming-books-it.md` | 95 |
 | `free-programming-books-ja.md` | 294 |
 | `free-programming-books-ko.md` | 80 |
-| `free-programming-books-langs.md` | 1653 |
+| `free-programming-books-langs.md` | 1655 |
 | `free-programming-books-lv.md` | 4 |
 | `free-programming-books-ml.md` | 4 |
 | `free-programming-books-my.md` | 19 |
