@@ -1,49 +1,48 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-24T03:42:59.631Z
+- Generated: 2026-11-25T16:39:05.648Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
-- Upstream commit: `568ce843220bc898456a0f5e793db93bd8c24de6`
-- Previous commit: `5ba11e91facbfc2e5c848715febcda419a841f3e`
+- Upstream commit: `53ea9c736e54178c7a4d64ea3a1c8fc51b185723`
+- Previous commit: `568ce843220bc898456a0f5e793db93bd8c24de6`
 - License of source catalog: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Changes since last sync
 
-- Added: 4
-- Updated: 939
-- Removed: 2
+- Added: 1
+- Updated: 242
+- Removed: 4
 
 ### Added (first entries)
-- 10 Keys to Great Landing Pages
-- Linux, DevOps and SRE
-- PHP Basics: Free Beginner Course With a Blog Project
-- Raspberry Pi Beginner's Guide 4th Edition
+- Belajar Vue.js
 
 ### Updated (first entries)
-- .NET documentation - Microsoft Docs (source)
-- .NET for Visual FoxPro Developers (source)
 - .NET Framework Notes for Professionals ()
-- .NET Framework Notes for Professionals (source)
-- .NET Performance Testing and Optimization - The Complete Guide (source)
 - 《The Swift Programming Language》中文版 ()
-- 100 (and counting) Laravel Quick Tips (source)
-- 100 Page Python Intro (source)
+- 2 ()
+- 3 Days With Mysql For Your Application: Mysql Untuk Pemula (source)
+- ৫২ টি প্রোগ্রামিং সমস্যা ()
+- AI dan Claude Code untuk Praktik Game Design (source)
+- Algoritma dan Struktur Data dengan Java oleh Polinema SIB (source)
+- Android Developers Fundamental Course Concepts and Practicals (Bahasa Indonesia) (source)
 
 ### Removed (first entries)
-- 10 Keys to Great Landing Pages
-- Raspberry Pi Beginner's Guide 4th Edition
+- Belajar Vue.js
+- Mari Belajar Golang
+- Menguasai Pemrograman Berorientasi Objek Dengan Bahasa C#
+- Tutorial Membuat Aplikasi Galeri Foto Android
 
 ## Counts
 
 | Metric | Value |
 | --- | ---: |
-| Books | 4741 |
+| Books | 4738 |
 | Categories | 498 |
 | Languages | 46 |
 | Readable | 3 |
 | Source Files | 49 |
 | Duplicates Removed | 65 |
 | Invalid Urls Skipped | 0 |
-| New Since Last Sync | 4 |
+| New Since Last Sync | 1 |
 
 ## Source files
 
@@ -69,7 +68,7 @@
 | `free-programming-books-hi.md` | 21 |
 | `free-programming-books-hu.md` | 42 |
 | `free-programming-books-hy.md` | 0 |
-| `free-programming-books-id.md` | 97 |
+| `free-programming-books-id.md` | 94 |
 | `free-programming-books-it.md` | 95 |
 | `free-programming-books-ja.md` | 294 |
 | `free-programming-books-ko.md` | 80 |

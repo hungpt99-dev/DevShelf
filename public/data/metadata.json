@@ -2,21 +2,21 @@
   "repository": "EbookFoundation/free-programming-books",
   "sourceUrl": "https://github.com/EbookFoundation/free-programming-books",
   "ref": "main",
-  "commit": "568ce843220bc898456a0f5e793db93bd8c24de6",
-  "syncedAt": "2026-11-24T03:42:59.631Z",
+  "commit": "53ea9c736e54178c7a4d64ea3a1c8fc51b185723",
+  "syncedAt": "2026-11-25T16:39:05.648Z",
   "license": {
     "name": "CC BY 4.0",
     "url": "https://creativecommons.org/licenses/by/4.0/"
   },
   "counts": {
-    "books": 4741,
+    "books": 4738,
     "categories": 498,
     "languages": 46,
     "readable": 3,
     "sourceFiles": 49,
     "duplicatesRemoved": 65,
     "invalidUrlsSkipped": 0,
-    "newSinceLastSync": 4
+    "newSinceLastSync": 1
   },
   "notes": [
     "All book records are derived from Markdown files in the EbookFoundation/free-programming-books repository.",

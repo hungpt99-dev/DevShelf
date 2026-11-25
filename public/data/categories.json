@@ -67,7 +67,7 @@
   {
     "name": "Go",
     "slug": "c-4a196298df86",
-    "count": 66
+    "count": 65
   },
   {
     "name": "0 - 言語非依存",
@@ -82,7 +82,7 @@
   {
     "name": "C#",
     "slug": "c-99b230c6ed94",
-    "count": 58
+    "count": 57
   },
   {
     "name": "Django",
@@ -155,14 +155,14 @@
     "count": 36
   },
   {
-    "name": "Android",
-    "slug": "c-7b73d68e20d1",
-    "count": 34
-  },
-  {
     "name": "Bash",
     "slug": "c-2991aeb137f5",
     "count": 34
+  },
+  {
+    "name": "Android",
+    "slug": "c-7b73d68e20d1",
+    "count": 33
   },
   {
     "name": "0 - Meta-Lists",
