@@ -1,48 +1,51 @@
 # DevShelf synchronization report
 
-- Generated: 2026-11-25T16:39:05.648Z
+- Generated: 2026-11-27T01:24:49.360Z
 - Source: https://github.com/EbookFoundation/free-programming-books (branch `main`)
-- Upstream commit: `53ea9c736e54178c7a4d64ea3a1c8fc51b185723`
-- Previous commit: `568ce843220bc898456a0f5e793db93bd8c24de6`
+- Upstream commit: `20b8e06ef6acaf2c3c2886faa498984d90cb008e`
+- Previous commit: `53ea9c736e54178c7a4d64ea3a1c8fc51b185723`
 - License of source catalog: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/)
 
 ## Changes since last sync
 
-- Added: 1
-- Updated: 242
-- Removed: 4
+- Added: 6
+- Updated: 1392
+- Removed: 2
 
 ### Added (first entries)
-- Belajar Vue.js
+- Foundation Model Engineering
+- Foundations of Computer Vision
+- Programozás III.
+- Python Like You Mean It
+- Zero to Beginner Rust
+- 파운데이션 모델 엔지니어링
 
 ### Updated (first entries)
 - .NET Framework Notes for Professionals ()
+- "DYNAMIC LINKED LIBRARIES": Paradigms of the GPL license in contemporary software (source)
 - 《The Swift Programming Language》中文版 ()
+- 10 Keys to Great Landing Pages (source)
 - 2 ()
-- 3 Days With Mysql For Your Application: Mysql Untuk Pemula (source)
-- ৫২ টি প্রোগ্রামিং সমস্যা ()
-- AI dan Claude Code untuk Praktik Game Design (source)
-- Algoritma dan Struktur Data dengan Java oleh Polinema SIB (source)
-- Android Developers Fundamental Course Concepts and Practicals (Bahasa Indonesia) (source)
+- 2016 European Software Development Salary Survey (source)
+- 2016 Software Development Salary Survey (source)
+- 2D Game Development: From Zero To Hero (source)
 
 ### Removed (first entries)
-- Belajar Vue.js
-- Mari Belajar Golang
-- Menguasai Pemrograman Berorientasi Objek Dengan Bahasa C#
-- Tutorial Membuat Aplikasi Galeri Foto Android
+- Arduino programozási kézikönyv
+- Programozás III.
 
 ## Counts
 
 | Metric | Value |
 | --- | ---: |
-| Books | 4738 |
+| Books | 4742 |
 | Categories | 498 |
 | Languages | 46 |
 | Readable | 3 |
 | Source Files | 49 |
 | Duplicates Removed | 65 |
 | Invalid Urls Skipped | 0 |
-| New Since Last Sync | 1 |
+| New Since Last Sync | 6 |
 
 ## Source files
 
@@ -66,13 +69,13 @@
 | `free-programming-books-fr.md` | 96 |
 | `free-programming-books-he.md` | 7 |
 | `free-programming-books-hi.md` | 21 |
-| `free-programming-books-hu.md` | 42 |
+| `free-programming-books-hu.md` | 41 |
 | `free-programming-books-hy.md` | 0 |
 | `free-programming-books-id.md` | 94 |
 | `free-programming-books-it.md` | 95 |
 | `free-programming-books-ja.md` | 294 |
-| `free-programming-books-ko.md` | 80 |
-| `free-programming-books-langs.md` | 1655 |
+| `free-programming-books-ko.md` | 81 |
+| `free-programming-books-langs.md` | 1657 |
 | `free-programming-books-lv.md` | 4 |
 | `free-programming-books-ml.md` | 4 |
 | `free-programming-books-my.md` | 19 |
@@ -86,7 +89,7 @@
 | `free-programming-books-sk.md` | 5 |
 | `free-programming-books-sl.md` | 1 |
 | `free-programming-books-sr.md` | 11 |
-| `free-programming-books-subjects.md` | 851 |
+| `free-programming-books-subjects.md` | 853 |
 | `free-programming-books-sv.md` | 7 |
 | `free-programming-books-ta.md` | 26 |
 | `free-programming-books-te.md` | 5 |

@@ -7,7 +7,7 @@
   {
     "name": "Python",
     "slug": "c-008c5436fee2",
-    "count": 392
+    "count": 393
   },
   {
     "name": "Java",
@@ -62,7 +62,7 @@
   {
     "name": "Machine Learning",
     "slug": "c-703e68f1bb24",
-    "count": 68
+    "count": 69
   },
   {
     "name": "Go",
@@ -92,7 +92,7 @@
   {
     "name": "Rust",
     "slug": "c-fa0d0ccc17e9",
-    "count": 52
+    "count": 53
   },
   {
     "name": "Software Architecture",
@@ -147,7 +147,7 @@
   {
     "name": "Artificial Intelligence",
     "slug": "c-4cf10e0e7103",
-    "count": 37
+    "count": 38
   },
   {
     "name": "Version Control Systems",
@@ -355,11 +355,6 @@
     "count": 17
   },
   {
-    "name": "Arduino",
-    "slug": "c-072d4e83e61e",
-    "count": 17
-  },
-  {
     "name": "Programming",
     "slug": "c-3755ddf6f727",
     "count": 17
@@ -373,6 +368,11 @@
     "name": "版本控制",
     "slug": "c-f9ddaace1186",
     "count": 17
+  },
+  {
+    "name": "Arduino",
+    "slug": "c-072d4e83e61e",
+    "count": 16
   },
   {
     "name": "Compiler Design",
@@ -675,6 +675,11 @@
     "count": 7
   },
   {
+    "name": "Computer Vision",
+    "slug": "c-8ca70caa6bd2",
+    "count": 7
+  },
+  {
     "name": "D3.js",
     "slug": "c-b5ef2d963f7a",
     "count": 7
@@ -742,11 +747,6 @@
   {
     "name": "AWK",
     "slug": "c-aacb1bc90559",
-    "count": 6
-  },
-  {
-    "name": "Computer Vision",
-    "slug": "c-8ca70caa6bd2",
     "count": 6
   },
   {
